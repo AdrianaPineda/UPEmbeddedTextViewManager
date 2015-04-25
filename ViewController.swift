@@ -114,7 +114,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     // This one might be client-configured
     func configureCell(sizingCell:TestCellTableViewCell, atIndexPath indexPath:NSIndexPath)
     {
-        sizingCell.textView.text = self.testText
+        sizingCell.textView.text = self.testText as String
     }
     
     // Note: we use systemLayoutFittingSize as the technique for retrieving cell height 
