@@ -83,4 +83,11 @@ extension UITableView {
     {
         return CGRectEqualToRect(TextViewSelection.start, CGRectZero) || CGRectEqualToRect(TextViewSelection.end, CGRectZero)
     }
+    
+    func heightForRowAtIndexPath(indexPath: NSIndexPath, reuseIdentifier: String) -> CGFloat {
+        
+        let upManager = UPManager()
+        
+        return upManager.tableView(self, heightForRowAtIndexPath: indexPath, reuseIdentifier: reuseIdentifier)
+    }
 }

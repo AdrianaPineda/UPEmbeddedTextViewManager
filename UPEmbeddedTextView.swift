@@ -9,7 +9,10 @@
 import UIKit
 
 class UPEmbeddedTextView: UITextView {
-
+    
+    let UPContainerInset = UIEdgeInsetsMake(18, 4, -4, 0)
+    let UPContentInset = UIEdgeInsetsMake(4, 0, 0, 0)
+    
     var previousRect: CGRect! = CGRectZero
     var textViewWidthConstraint: NSLayoutConstraint?
     var textViewHeightConstraint:NSLayoutConstraint!
@@ -18,22 +21,27 @@ class UPEmbeddedTextView: UITextView {
     var enableAutomaticCollapse: Bool = true
     
     required init(coder aDecoder: NSCoder) {
+        
         super.init(coder: aDecoder)
+        
         self.textContainerInset =
-            UIEdgeInsetsMake(18,
-                4,
-                4,
+            UIEdgeInsetsMake(UPContainerInset.top,
+                UPContainerInset.left,
+                UPContainerInset.bottom,
                 self.textContainerInset.right)
+        
         self.contentInset =
-            UIEdgeInsetsMake(-4,
+            UIEdgeInsetsMake(UPContentInset.top,
                 self.contentInset.left,
-                0,
+                UPContentInset.bottom,
                 self.contentInset.right)
+        
         if (self.textViewHeightConstraint == nil){
             self.setTranslatesAutoresizingMaskIntoConstraints(false)
             self.textViewHeightConstraint = NSLayoutConstraint(item: self, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute, multiplier: 1, constant: self.defaultHeightConstant)
             self.addConstraint(self.textViewHeightConstraint)
         }
+        
     }
     
     /*
@@ -43,5 +51,14 @@ class UPEmbeddedTextView: UITextView {
         // Drawing code
     }
     */
+    
+    func configureInsets() {
+        
+    }
+    
+    func getAbsolutePaddingHeight() -> CGFloat {
+        
+        return UPContainerInset.top + UPContainerInset.bottom + UPContentInset.top + UPContentInset.bottom
+    }
 
 }
