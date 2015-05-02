@@ -30,6 +30,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     
     var testText2: NSString = "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."
     
+    var testText3: NSString = "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,12 +82,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return 3
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 
-        if indexPath.section == 0 && (indexPath.row == 0 || indexPath.row == 1) {
+        if indexPath.section == 0 && (indexPath.row == 0 || indexPath.row == 1 || indexPath.row == 2) {
             
             return self.tableView.heightForRowAtIndexPath(indexPath, reuseIdentifier: "testCell")
         }
@@ -101,8 +102,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
             
             if indexPath.row == 0 {
                 cell.textView.text = self.testText as String
-            } else {
+            } else if indexPath.row == 1 {
                 cell.textView.text = self.testText2 as String
+            } else {
+                cell.textView.text = self.testText3 as String
             }
             
             return cell
@@ -129,8 +132,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     {
         if indexPath.row == 0 {
             sizingCell.textView.text = self.testText as String
-        } else {
+        } else if indexPath.row == 1{
             sizingCell.textView.text = self.testText2 as String
+        } else {
+            sizingCell.textView.text = self.testText3 as String
         }
         
     }

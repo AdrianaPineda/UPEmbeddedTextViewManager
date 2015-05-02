@@ -51,7 +51,7 @@ class UPManager: NSObject {
             
             if currentCellInstance != nil  {
                 
-                currentCellInstance!.contentView.addConstraint(NSLayoutConstraint(item: currentCellInstance!, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute, multiplier: 1, constant: CGRectGetWidth(tableView.bounds)))
+                currentCellInstance!.addConstraint(NSLayoutConstraint(item: currentCellInstance!, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute, multiplier: 1, constant: CGRectGetWidth(tableView.bounds)))
             }
         }
         
