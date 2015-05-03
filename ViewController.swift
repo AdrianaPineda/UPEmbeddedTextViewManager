@@ -89,8 +89,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
 
         if indexPath.section == 0 && (indexPath.row == 0 || indexPath.row == 1 || indexPath.row == 2) {
             
-            
-            
             return self.tableView.heightForRowAtIndexPath(indexPath, reuseIdentifier: "testCell", textForTextView:{ (textView, indexPath) -> String in
                 
                 if indexPath.row == 0 {
@@ -129,15 +127,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     // TODO: Need to find a way to expose all these methods! i.e avoid the
     // client setting them if possible
     
-//    func heightForCellAtIndexPath(indexPath:NSIndexPath) -> CGFloat {
-//        if self.instance == nil{
-//            self.instance = self.tableView.dequeueReusableCellWithIdentifier("testCell") as? TestCellTableViewCell
-//            self.instance?.widthConstraint = NSLayoutConstraint(item: self.instance!, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute, multiplier: 1, constant: CGRectGetWidth(self.view.bounds))
-//        }
-//        self.configureCell(self.instance!, atIndexPath: indexPath)
-//        return self.calculateHeightForConfiguredSizingCell(self.instance!)
-//    }
-    
     // This one might be client-configured
     func configureCell(sizingCell:TestCellTableViewCell, atIndexPath indexPath:NSIndexPath)
     {
@@ -148,26 +137,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
         } else {
             sizingCell.textView.text = self.testText3 as String
         }
-        
     }
-    
-    // Note: we use systemLayoutFittingSize as the technique for retrieving cell height 
-    // in order to offer compatibility with iOS 7. Once we discard iOS 7 we might use the
-    // advantages of iOS 8
-//    func calculateHeightForConfiguredSizingCell(sizingCell: TestCellTableViewCell)->CGFloat {
-//        // TODO: Need to find a way to update the frame with the EXACT required height, so as
-//        // to avoid autolayout warnings for assigning the height constraint's constant to a
-//        // value that is greater than the current cell height!
-//        let textViewSize:CGSize = sizingCell.textView.sizeThatFits(CGSizeMake(CGRectGetWidth(self.view.bounds), CGFloat.max))
-//        sizingCell.textView.textViewHeightConstraint.constant = textViewSize.height
-//        
-//        sizingCell.setNeedsLayout()
-//        sizingCell.layoutIfNeeded()
-//        
-//        var size: CGSize = sizingCell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
-//        
-//        return size.height + sizingCell.textView.getAbsolutePaddingHeight()
-//    }
     
     // MARK: - UITextViewDelegate
     

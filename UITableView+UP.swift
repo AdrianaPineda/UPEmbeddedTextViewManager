@@ -87,7 +87,10 @@ extension UITableView {
     func heightForRowAtIndexPath(indexPath: NSIndexPath, reuseIdentifier: String, textForTextView: (textView:UPEmbeddedTextView, indexPath:NSIndexPath) -> String) -> CGFloat {
         
         let upManager = UPManager()
-        
-        return upManager.tableView(self, heightForRowAtIndexPath: indexPath, reuseIdentifier: reuseIdentifier, textForTextView:textForTextView)
+        var superViewBounds = CGRectZero
+        if let superview = self.superview{
+            superViewBounds = superview.bounds;
+        }
+        return upManager.tableView(self, heightForRowAtIndexPath: indexPath, reuseIdentifier: reuseIdentifier, superViewBounds:superViewBounds, textForTextView:textForTextView)
     }
 }

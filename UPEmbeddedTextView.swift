@@ -39,9 +39,7 @@ class UPEmbeddedTextView: UITextView {
         if (self.textViewHeightConstraint == nil){
             self.setTranslatesAutoresizingMaskIntoConstraints(false)
             self.textViewHeightConstraint = NSLayoutConstraint(item: self, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal, toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute, multiplier: 1, constant: self.defaultHeightConstant)
-            self.addConstraint(self.textViewHeightConstraint)
         }
-        
     }
     
     /*
