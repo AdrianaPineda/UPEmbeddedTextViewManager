@@ -37,7 +37,7 @@ class UPManager: NSObject {
     // Methods
     
     // Return the height for the row at index path
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath, reuseIdentifier: String) -> CGFloat {
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath, reuseIdentifier: String, textForTextView: (textView:UPEmbeddedTextView, indexPath:NSIndexPath) -> String) -> CGFloat {
         
         var currentCellInstance: UITableViewCell?
         
@@ -56,7 +56,7 @@ class UPManager: NSObject {
         }
         
 //        self.configureCell(currentCellInstance!, atIndexPath: indexPath)
-        return self.calculateHeightForConfiguredSizingCell(currentCellInstance!, tableView:tableView)
+        return self.calculateHeightForConfiguredSizingCell(currentCellInstance!, tableView:tableView, indexPath: indexPath, textForTextView:textForTextView)
     }
     
     // This one might be client-configured
@@ -70,8 +70,15 @@ class UPManager: NSObject {
 ////        } else {
 ////            sizingCell.textView.text = self.testText2 as String
 ////        }
-//        
+//
 //    }
+
+    
+    func configureTextView(textView: UPEmbeddedTextView, atIndexPath indexPath:NSIndexPath, textForTextView: (textView:UPEmbeddedTextView, indexPath:NSIndexPath) -> String) {
+        
+        textView.text = textForTextView(textView:textView, indexPath:indexPath)
+        
+    }
     
     func textViewsForCell(cell: UITableViewCell) -> NSArray {
         
@@ -102,7 +109,7 @@ class UPManager: NSObject {
     // Note: we use systemLayoutFittingSize as the technique for retrieving cell height
     // in order to offer compatibility with iOS 7. Once we discard iOS 7 we might use the
     // advantages of iOS 8
-    func calculateHeightForConfiguredSizingCell(sizingCell: UITableViewCell, tableView: UITableView)->CGFloat {
+    func calculateHeightForConfiguredSizingCell(sizingCell: UITableViewCell, tableView: UITableView, indexPath: NSIndexPath, textForTextView: (textView:UPEmbeddedTextView, indexPath:NSIndexPath) -> String)->CGFloat {
         
         // TODO: Need to find a way to update the frame with the EXACT required height, so as
         // to avoid autolayout warnings for assigning the height constraint's constant to a
@@ -115,6 +122,8 @@ class UPManager: NSObject {
         for textView in textViews {
          
             if let currentTextView = textView as? UPEmbeddedTextView {
+                
+                self.configureTextView(currentTextView, atIndexPath: indexPath, textForTextView:textForTextView)
                 
                 let textViewSize:CGSize = currentTextView.sizeThatFits(CGSizeMake(CGRectGetWidth(tableView.bounds), CGFloat.max))
                 currentTextView.textViewHeightConstraint.constant = textViewSize.height

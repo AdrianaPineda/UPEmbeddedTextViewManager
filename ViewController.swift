@@ -89,12 +89,23 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
 
         if indexPath.section == 0 && (indexPath.row == 0 || indexPath.row == 1 || indexPath.row == 2) {
             
-            return self.tableView.heightForRowAtIndexPath(indexPath, reuseIdentifier: "testCell")
+            
+            
+            return self.tableView.heightForRowAtIndexPath(indexPath, reuseIdentifier: "testCell", textForTextView:{ (textView, indexPath) -> String in
+                
+                if indexPath.row == 0 {
+                    return self.testText as String
+                } else if indexPath.row == 1 {
+                    return self.testText2 as String
+                } else {
+                    return self.testText3 as String
+                }
+            })
         }
         
         return 0
     }
-
+    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 
         if let cell = tableView.dequeueReusableCellWithIdentifier("testCell", forIndexPath: indexPath) as? TestCellTableViewCell{
