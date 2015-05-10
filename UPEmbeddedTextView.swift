@@ -10,7 +10,7 @@ import UIKit
 
 class UPEmbeddedTextView: UITextView {
     
-    let UPContainerInset = UIEdgeInsetsMake(18, 4, -4, 0)
+    let UPContainerInset = UIEdgeInsetsMake(18, 0, -4, 0)
     let UPContentInset = UIEdgeInsetsMake(4, 0, 0, 0)
     
     var previousRect: CGRect! = CGRectZero
