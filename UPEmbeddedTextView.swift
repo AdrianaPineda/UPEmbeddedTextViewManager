@@ -56,7 +56,7 @@ class UPEmbeddedTextView: UITextView {
     
     func getAbsolutePaddingHeight() -> CGFloat {
         
-        return UPContainerInset.top + UPContainerInset.bottom + UPContentInset.top + UPContentInset.bottom
+        return abs(UPContainerInset.top) + abs(UPContainerInset.bottom) + abs(UPContentInset.top) + abs(UPContentInset.bottom)
     }
 
 }
