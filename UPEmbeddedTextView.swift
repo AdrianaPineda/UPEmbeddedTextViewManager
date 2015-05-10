@@ -10,8 +10,8 @@ import UIKit
 
 class UPEmbeddedTextView: UITextView {
     
-    let UPContainerInset = UIEdgeInsetsMake(18, 0, -4, 0)
-    let UPContentInset = UIEdgeInsetsMake(4, 0, 0, 0)
+    let UPContainerInset = UIEdgeInsetsMake(13, 0, 8, 0)
+    let UPContentInset = UIEdgeInsetsMake(2, 0, 2, 0)
     
     var previousRect: CGRect! = CGRectZero
     var textViewWidthConstraint: NSLayoutConstraint?
