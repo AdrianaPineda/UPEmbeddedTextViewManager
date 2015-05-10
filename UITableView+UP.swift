@@ -88,7 +88,7 @@ extension UITableView {
         
         let upManager = UPManager()
         var superViewBounds = CGRectZero
-        if let superview = self.superview{
+        if let superview = self.superview {
             superViewBounds = superview.bounds;
         }
         return upManager.tableView(self, heightForRowAtIndexPath: indexPath, reuseIdentifier: reuseIdentifier, superViewBounds:superViewBounds, textForTextView:textForTextView)

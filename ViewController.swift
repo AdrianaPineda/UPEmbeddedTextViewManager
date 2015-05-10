@@ -22,7 +22,6 @@ import UIKit
 class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegate {
 
     // TODO: How to avoid client requiring all these properties??
-    var instance: TestCellTableViewCell? = nil
     var previousTextViewRect: CGSize!
     @IBOutlet weak var widthConstraint: NSLayoutConstraint!
     @IBOutlet weak var tableView: UITableView!
