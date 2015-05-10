@@ -57,8 +57,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     func keyboardWillShow(notification: NSNotification)
     {
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+            
             var contentInsets = self.tableView.contentInset
-            contentInsets = UIEdgeInsets(top: contentInsets.top, left: contentInsets.left, bottom: keyboardSize.height + 20, right: contentInsets.right) //TODO: The + 20 corresponds to the status bar height!
+            contentInsets = UIEdgeInsets(top: contentInsets.top, left: contentInsets.left, bottom: keyboardSize.height + UIApplication.sharedApplication().statusBarFrame.size.height, right: contentInsets.right)
+            
             if keyboardSize.height > 0
             {
                 self.tableView.contentInset = contentInsets
