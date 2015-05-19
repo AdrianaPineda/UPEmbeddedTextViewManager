@@ -30,10 +30,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     var testText2: NSString = "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."
     
     var testText3: NSString = "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."
+    var testTexts: NSMutableArray!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.previousTextViewRect = CGSizeZero
+        self.testTexts = [testText, testText2, testText3]
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -92,13 +94,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
             
             return self.tableView.heightForRowAtIndexPath(indexPath, reuseIdentifier: "testCell", textForTextView:{ (textView, indexPath) -> String in
                 
-                if indexPath.row == 0 {
-                    return self.testText as String
-                } else if indexPath.row == 1 {
-                    return self.testText2 as String
-                } else {
-                    return self.testText3 as String
+                if let testText = self.testTexts[indexPath.row] as? String{
+                    return testText
                 }
+                return ""
             })
         }
         
@@ -110,13 +109,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
         if let cell = tableView.dequeueReusableCellWithIdentifier("testCell", forIndexPath: indexPath) as? TestCellTableViewCell{
             cell.textView.delegate = self
             
-            if indexPath.row == 0 {
-                cell.textView.text = self.testText as String
-            } else if indexPath.row == 1 {
-                cell.textView.text = self.testText2 as String
-            } else {
-                cell.textView.text = self.testText3 as String
+            if let testText = self.testTexts[indexPath.row] as? String{
+                cell.textView.text = testText
             }
+            cell.textView.tag = indexPath.row
             
             return cell
         }
@@ -131,12 +127,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     // This one might be client-configured
     func configureCell(sizingCell:TestCellTableViewCell, atIndexPath indexPath:NSIndexPath)
     {
-        if indexPath.row == 0 {
-            sizingCell.textView.text = self.testText as String
-        } else if indexPath.row == 1{
-            sizingCell.textView.text = self.testText2 as String
-        } else {
-            sizingCell.textView.text = self.testText3 as String
+        if let testText = self.testTexts[indexPath.row] as? String{
+            sizingCell.textView.text = testText
         }
     }
     
@@ -145,25 +137,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     func textViewDidChange(textView: UITextView) {
         // TODO: Obviously we cannot expect to have a property textView. This must be scalable and
         // abstract!
-        if let cell = self.tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0)) as? TestCellTableViewCell{
+        if let cell = self.tableView.cellForRowAtIndexPath(NSIndexPath(forRow: textView.tag, inSection: 0)) as? TestCellTableViewCell{
             if cell.textView == textView{
-                self.testText = cell.textView.text
-                let currentSize: CGSize = textView.sizeThatFits(CGSizeMake(textView.frame.width, CGFloat.max));
-                // Check if the height really requires changing and a tableView update is needed
-                if (!CGSizeEqualToSize(currentSize, self.previousTextViewRect) ) {
-                    self.previousTextViewRect = currentSize;
-                    if !CGSizeEqualToSize(self.previousTextViewRect, CGSizeZero)
-                    {
-                        self.tableView.beginUpdates()
-                        self.tableView.endUpdates()
-                    }
-                }
-            }
-        }
-        
-        if let cell = self.tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 1, inSection: 0)) as? TestCellTableViewCell{
-            if cell.textView == textView{
-                self.testText = cell.textView.text
+                self.testTexts[textView.tag] = cell.textView.text
                 let currentSize: CGSize = textView.sizeThatFits(CGSizeMake(textView.frame.width, CGFloat.max));
                 // Check if the height really requires changing and a tableView update is needed
                 if (!CGSizeEqualToSize(currentSize, self.previousTextViewRect) ) {
