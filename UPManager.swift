@@ -39,6 +39,9 @@ class UPManager: NSObject, UITextViewDelegate {
             self.delegate = textViewDelegate
         }
         self.offScreenCells = NSMutableDictionary()
+        
+        topScrollingOffset = defaultTopScrollingOffset
+        bottomScrollingOffset = defaultBottomScrollingOffset
     }
     
     // Methods
@@ -168,15 +171,11 @@ class UPManager: NSObject, UITextViewDelegate {
     
     func configureTopAndBottomScrollingOffsetsForVisibleHeight(visibleHeight:CGFloat) {
         
-        if topScrollingOffset < 0 {
-            topScrollingOffset = defaultTopScrollingOffset
-        } else if topScrollingOffset > (visibleHeight/4) {
+        if topScrollingOffset > (visibleHeight/4) {
             topScrollingOffset = floor(visibleHeight/4)
         }
         
-        if bottomScrollingOffset < 0 {
-            bottomScrollingOffset = defaultBottomScrollingOffset
-        } else if bottomScrollingOffset > (visibleHeight/4) {
+        if bottomScrollingOffset > (visibleHeight/4) {
             bottomScrollingOffset = floor(visibleHeight/4)
         }
     }
