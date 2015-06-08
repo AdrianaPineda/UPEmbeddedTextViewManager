@@ -19,11 +19,27 @@ public class UPEmbeddedTextView: UITextView {
     var defaultHeightConstant:CGFloat = 30
     var collapsedHeigthConstant: CGFloat = 10
     var enableAutomaticCollapse: Bool = true
+    var upId: NSInteger = -1
+    
+    override init(frame: CGRect, textContainer: NSTextContainer?) {
+        super.init(frame: frame, textContainer: textContainer)
+        self.configureInsets()
+    }
     
     required public init(coder aDecoder: NSCoder) {
-        
         super.init(coder: aDecoder)
-        
+        self.configureInsets()
+    }
+    
+    /*
+    // Only override drawRect: if you perform custom drawing.
+    // An empty implementation adversely affects performance during animation.
+    override func drawRect(rect: CGRect) {
+    // Drawing code
+    }
+    */
+    
+    func configureInsets() {
         self.textContainerInset =
             UIEdgeInsetsMake(UPContainerInset.top,
                 UPContainerInset.left,
@@ -42,21 +58,16 @@ public class UPEmbeddedTextView: UITextView {
         }
     }
     
-    /*
-    // Only override drawRect: if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func drawRect(rect: CGRect) {
-        // Drawing code
-    }
-    */
-    
-    func configureInsets() {
-        
-    }
-    
     public func getAbsolutePaddingHeight() -> CGFloat {
         
         return abs(UPContainerInset.top) + abs(UPContainerInset.bottom) + abs(UPContentInset.top) + abs(UPContentInset.bottom)
     }
-
+    
+    public override var delegate:UITextViewDelegate?{
+        didSet{
+            if let upDelegate = self.delegate as? UPManager{
+                upDelegate.setManagedUPTextView(self)
+            }
+        }
+    }
 }

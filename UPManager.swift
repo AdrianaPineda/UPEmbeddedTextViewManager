@@ -8,23 +8,29 @@
 
 import UIKit
 
-struct UPTextViewSelection {
-    static var start: CGRect = CGRectZero
-    static var end: CGRect = CGRectZero
+class UPTextViewSelection {
+    var start: CGRect = CGRectZero
+    var end: CGRect = CGRectZero
 }
 
-class UPManager: NSObject {
+class UPManager: NSObject, UITextViewDelegate {
     
     var offScreenCells: NSMutableDictionary!
     weak var tableView: UITableView!
+    let textViewSelection = UPTextViewSelection()
+    var managedTextViewsMetaData = NSMutableDictionary() // TODO: Should we use as key the object reference?
+    var delegate: UITextViewDelegate?
     
-    init(tableView: UITableView) {
+    init(delegate:UITextViewDelegate?, tableView: UITableView) {
         super.init()
         if let initializedTableView = tableView as UITableView?{
             self.tableView = initializedTableView
         }
         else{
             fatalError("UPManager initialized without a valid tableView instance")
+        }
+        if let textViewDelegate = delegate as UITextViewDelegate?{
+            self.delegate = textViewDelegate
         }
         self.offScreenCells = NSMutableDictionary()
     }
@@ -54,7 +60,7 @@ class UPManager: NSObject {
             textViews.addObject(currentTextView)
             
         } else {
-         
+            
             for currentView in view.subviews {
                 
                 findTextViewsOfView(currentView as! UIView, textViews: textViews)
@@ -77,7 +83,7 @@ class UPManager: NSObject {
         var absolutePaddingHeight:CGFloat = 0
         
         for textView in textViews {
-         
+            
             if let currentTextView = textView as? UPEmbeddedTextView {
                 
                 self.configureTextView(currentTextView, atIndexPath: indexPath, textForTextView:textForTextView)
@@ -98,11 +104,11 @@ class UPManager: NSObject {
         sizingCell.setNeedsLayout()
         sizingCell.layoutIfNeeded()
         
-        return size.height + absolutePaddingHeight
-
+        return size.height //+ absolutePaddingHeight
+        
     }
     
-    // Mark: - 
+    // Mark: -
     
     func updateTextViewZoomArea(textView: UITextView){
         let selectionRange :UITextRange = textView.selectedTextRange!
@@ -116,7 +122,7 @@ class UPManager: NSObject {
         
         let rectY:CGFloat = self.yCoordinateForEnclosingRectWithStartRect(selectionStartRect, endRect: selectionEndRect, visibleHeight: visibleHeight)
         
-        if rectY >= 0 && !(selectionStartRect.origin.y == UPTextViewSelection.start.origin.y && selectionEndRect.origin.y == UPTextViewSelection.end.origin.y)
+        if rectY >= 0 && !(selectionStartRect.origin.y == self.textViewSelection.start.origin.y && selectionEndRect.origin.y == self.textViewSelection.end.origin.y)
         {
             let enclosingRect: CGRect = CGRectMake(0,
                 rectY,
@@ -127,8 +133,10 @@ class UPManager: NSObject {
                 self.tableView.scrollRectToVisible(enclosingRect, animated: false)
                 }, completion:nil)
         }
-        UPTextViewSelection.start = selectionStartRect
-        UPTextViewSelection.end = selectionEndRect
+        // TODO: WE MUST AVOID USING A STATIC STRUCT!!! There are serious issues because of that
+        // TODO: WE MUST RESET the selection/start/end always after finishing editing..
+        self.textViewSelection.start = selectionStartRect
+        self.textViewSelection.end = selectionEndRect
     }
     
     func yCoordinateForEnclosingRectWithStartRect(startRect:CGRect, endRect:CGRect, visibleHeight:CGFloat) -> CGFloat
@@ -144,22 +152,22 @@ class UPManager: NSObject {
         }
         else
         {
-            if (endRect.origin.y > UPTextViewSelection.end.origin.y && endRect.origin.y > contentOffsetY2 - 40)
+            if (endRect.origin.y > self.textViewSelection.end.origin.y && endRect.origin.y > contentOffsetY2 - 40)
             {
                 rectY = contentOffsetY2 - visibleHeight + 15
                 rectY = rectY < 0 ? 0 : rectY
             }
-            else if endRect.origin.y < UPTextViewSelection.end.origin.y && endRect.origin.y < contentOffsetY + 30
+            else if endRect.origin.y < self.textViewSelection.end.origin.y && endRect.origin.y < contentOffsetY + 30
             {
                 rectY = contentOffsetY - 15
                 rectY = rectY < 0 ? 0 : rectY
             }
-            else if (startRect.origin.y < UPTextViewSelection.start.origin.y && startRect.origin.y < contentOffsetY + 30)
+            else if (startRect.origin.y < self.textViewSelection.start.origin.y && startRect.origin.y < contentOffsetY + 30)
             {
                 rectY = contentOffsetY - 15
                 rectY = rectY < 0 ? 0 : rectY
             }
-            else if (startRect.origin.y > UPTextViewSelection.start.origin.y && startRect.origin.y > contentOffsetY2 - 40)
+            else if (startRect.origin.y > self.textViewSelection.start.origin.y && startRect.origin.y > contentOffsetY2 - 40)
             {
                 rectY = contentOffsetY2 - visibleHeight + 15
                 rectY = rectY < 0 ? 0 : rectY
@@ -170,7 +178,7 @@ class UPManager: NSObject {
     
     func selectionJustBegan() ->Bool
     {
-        return CGRectEqualToRect(UPTextViewSelection.start, CGRectZero) || CGRectEqualToRect(UPTextViewSelection.end, CGRectZero)
+        return CGRectEqualToRect(self.textViewSelection.start, CGRectZero) || CGRectEqualToRect(self.textViewSelection.end, CGRectZero)
     }
     
     func heightForRowAtIndexPath(indexPath: NSIndexPath, reuseIdentifier: String, textForTextView: (textView:UPEmbeddedTextView, indexPath:NSIndexPath) -> String) -> CGFloat {
@@ -179,7 +187,7 @@ class UPManager: NSObject {
         if let superview = self.tableView.superview {
             superViewBounds = superview.bounds;
         }
-       
+        
         var currentCellInstance: UITableViewCell?
         
         if let mappedCell = offScreenCells[reuseIdentifier] as? UITableViewCell {
@@ -195,5 +203,100 @@ class UPManager: NSObject {
         
         return 0 // The cell couldn't be dequeued! Check the reuse identifier!
     }
-
+    
+    // Mark: -
+    
+    func setManagedUPTextView(textView: UPEmbeddedTextView){
+        if !self.isManagedUPTextView(textView){
+            textView.upId = self.managedTextViewsMetaData.count
+            let previousSize = CGSizeZero
+            self.setManagedUPTextView(textView, previousSize: previousSize)
+        }
+    }
+    
+    func setManagedUPTextView(textView: UPEmbeddedTextView, previousSize:CGSize){
+        self.managedTextViewsMetaData[textView.upId] = CGSizeCreateDictionaryRepresentation(previousSize)
+    }
+    
+    private func isManagedUPTextView(textView: UPEmbeddedTextView) -> Bool{
+        if (self.previousSizeDictionaryRepresentation(textView) as NSDictionary).count > 0{
+            return true
+        }
+        return false
+    }
+    
+    private func previousSizeDictionaryRepresentation(textView: UPEmbeddedTextView) -> CFDictionary{
+        if let managedTextViewPreviousRect = self.managedTextViewsMetaData[textView.upId] as? NSDictionary{
+            return managedTextViewPreviousRect
+        }
+        return [:]
+    }
+    
+    private func previousSizeForUPTextView(textView: UPEmbeddedTextView) -> CGSize{
+        var previousSize = CGSizeZero
+        CGSizeMakeWithDictionaryRepresentation(self.previousSizeDictionaryRepresentation(textView), &previousSize)
+        return previousSize
+    }
+    
+    // Mark: - UITextViewDelegate
+    
+    func textViewDidChange(textView: UITextView) {
+        if let delegate = self.delegate as UITextViewDelegate?{
+            if delegate.respondsToSelector("textViewDidChange:"){
+                delegate.textViewDidChange!(textView)
+            }
+        }
+        if let upTextView = textView as? UPEmbeddedTextView{
+            if self.isManagedUPTextView(upTextView){
+                let currentSize: CGSize = textView.sizeThatFits(CGSizeMake(textView.frame.width, CGFloat.max));
+                if (!CGSizeEqualToSize(currentSize, self.previousSizeForUPTextView(upTextView))) {
+                    self.setManagedUPTextView(upTextView, previousSize: currentSize)
+                    if !CGSizeEqualToSize(currentSize, CGSizeZero)
+                    {
+                        self.tableView.beginUpdates()
+                        self.tableView.endUpdates()
+                    }
+                }
+                
+            }
+        } 
+    }
+    
+    func textViewDidChangeSelection(textView: UITextView) {
+        self.updateTextViewZoomArea(textView)
+        if let delegate = self.delegate as UITextViewDelegate?{
+            if delegate.respondsToSelector("textViewDidChangeSelection:"){
+                delegate.textViewDidChangeSelection!(textView)
+            }
+        }
+    }
+    
+    func textViewShouldBeginEditing(textView: UITextView) -> Bool {
+        var shouldBeginEditing = true
+        if let delegate = self.delegate as UITextViewDelegate?{
+            if delegate.respondsToSelector("textViewShouldBeginEditing:"){
+                shouldBeginEditing = delegate.textViewShouldBeginEditing!(textView)
+            }
+        }
+        if shouldBeginEditing{
+            self.tableView.beginUpdates()
+            self.tableView.endUpdates()
+            self.textViewSelection.start = CGRectZero
+            self.textViewSelection.end = CGRectZero
+        }
+        
+        return shouldBeginEditing
+    }
+    
+    func textViewDidEndEditing(textView: UITextView) {
+        self.tableView.beginUpdates()
+        self.tableView.endUpdates()
+        if let delegate = self.delegate as UITextViewDelegate?{
+            if delegate.respondsToSelector("textViewDidEndEditing:"){
+                delegate.textViewDidEndEditing!(textView)
+            }
+        }
+    }
+    
+    // Mark: - Forward Invocation
 }
