@@ -8,7 +8,7 @@
 
 import UIKit
 
-class UPEmbeddedTextView: UITextView {
+public class UPEmbeddedTextView: UITextView {
     
     let UPContainerInset = UIEdgeInsetsMake(13, 0, 8, 0)
     let UPContentInset = UIEdgeInsetsMake(2, 0, 2, 0)
@@ -20,7 +20,7 @@ class UPEmbeddedTextView: UITextView {
     var collapsedHeigthConstant: CGFloat = 10
     var enableAutomaticCollapse: Bool = true
     
-    required init(coder aDecoder: NSCoder) {
+    required public init(coder aDecoder: NSCoder) {
         
         super.init(coder: aDecoder)
         
@@ -54,7 +54,7 @@ class UPEmbeddedTextView: UITextView {
         
     }
     
-    func getAbsolutePaddingHeight() -> CGFloat {
+    public func getAbsolutePaddingHeight() -> CGFloat {
         
         return abs(UPContainerInset.top) + abs(UPContainerInset.bottom) + abs(UPContentInset.top) + abs(UPContentInset.bottom)
     }

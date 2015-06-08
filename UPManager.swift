@@ -8,36 +8,28 @@
 
 import UIKit
 
+struct UPTextViewSelection {
+    static var start: CGRect = CGRectZero
+    static var end: CGRect = CGRectZero
+}
+
 class UPManager: NSObject {
     
     var offScreenCells: NSMutableDictionary!
+    weak var tableView: UITableView!
     
-    override init() {
-        
+    init(tableView: UITableView) {
         super.init()
-        
+        if let initializedTableView = tableView as UITableView?{
+            self.tableView = initializedTableView
+        }
+        else{
+            fatalError("UPManager initialized without a valid tableView instance")
+        }
         self.offScreenCells = NSMutableDictionary()
     }
     
     // Methods
-    
-    // Return the height for the row at index path
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath, reuseIdentifier: String, superViewBounds: CGRect, textForTextView: (textView:UPEmbeddedTextView, indexPath:NSIndexPath) -> String) -> CGFloat {
-        
-        var currentCellInstance: UITableViewCell?
-        
-        if let mappedCell = offScreenCells[reuseIdentifier] as? UITableViewCell {
-            
-            currentCellInstance = mappedCell
-            
-        } else {
-            
-            currentCellInstance = tableView.dequeueReusableCellWithIdentifier(reuseIdentifier) as? UITableViewCell
-            
-        }
-        
-        return self.calculateHeightForConfiguredSizingCell(currentCellInstance!, tableView:tableView, indexPath: indexPath, superViewBounds:superViewBounds, textForTextView:textForTextView)
-    }
     
     func configureTextView(textView: UPEmbeddedTextView, atIndexPath indexPath:NSIndexPath, textForTextView: (textView:UPEmbeddedTextView, indexPath:NSIndexPath) -> String) {
         
@@ -92,7 +84,8 @@ class UPManager: NSObject {
                 
                 let textViewSize:CGSize = currentTextView.sizeThatFits(CGSizeMake(CGRectGetWidth(tableView.bounds), CGFloat.max))
                 currentTextView.textViewHeightConstraint.constant = textViewSize.height
-                currentTextView.addConstraint(currentTextView.textViewHeightConstraint)
+                currentTextView.removeConstraint(currentTextView.textViewHeightConstraint)
+                currentTextView.addConstraint(currentTextView.textViewHeightConstraint) //TODO: Might be added at the 'beginning'
                 absolutePaddingHeight += currentTextView.getAbsolutePaddingHeight()
             }
             
@@ -107,6 +100,100 @@ class UPManager: NSObject {
         
         return size.height + absolutePaddingHeight
 
+    }
+    
+    // Mark: - 
+    
+    func updateTextViewZoomArea(textView: UITextView){
+        let selectionRange :UITextRange = textView.selectedTextRange!
+        var selectionStartRect: CGRect = textView.caretRectForPosition(selectionRange.start)
+        var selectionEndRect: CGRect = textView.caretRectForPosition(selectionRange.end)
+        selectionStartRect = textView.convertRect(selectionStartRect, toView: self.tableView)
+        selectionEndRect = textView.convertRect(selectionEndRect, toView: self.tableView)
+        
+        let visibleFrameInsets = self.tableView.scrollIndicatorInsets
+        let visibleHeight:CGFloat = self.tableView.bounds.height - visibleFrameInsets.bottom
+        
+        let rectY:CGFloat = self.yCoordinateForEnclosingRectWithStartRect(selectionStartRect, endRect: selectionEndRect, visibleHeight: visibleHeight)
+        
+        if rectY >= 0 && !(selectionStartRect.origin.y == UPTextViewSelection.start.origin.y && selectionEndRect.origin.y == UPTextViewSelection.end.origin.y)
+        {
+            let enclosingRect: CGRect = CGRectMake(0,
+                rectY,
+                CGRectGetWidth(self.tableView.bounds),
+                visibleHeight)
+            
+            UIView.animateWithDuration(0.2, delay:0, options:UIViewAnimationOptions.CurveEaseInOut, animations: {
+                self.tableView.scrollRectToVisible(enclosingRect, animated: false)
+                }, completion:nil)
+        }
+        UPTextViewSelection.start = selectionStartRect
+        UPTextViewSelection.end = selectionEndRect
+    }
+    
+    func yCoordinateForEnclosingRectWithStartRect(startRect:CGRect, endRect:CGRect, visibleHeight:CGFloat) -> CGFloat
+    {
+        let contentOffsetY: CGFloat = self.tableView.contentOffset.y
+        let contentOffsetY2: CGFloat = self.tableView.contentOffset.y + visibleHeight
+        
+        var rectY :CGFloat = -1
+        if self.selectionJustBegan()
+        {
+            rectY = startRect.origin.y - (visibleHeight/2)
+            rectY = rectY < 0 ? 0 : rectY
+        }
+        else
+        {
+            if (endRect.origin.y > UPTextViewSelection.end.origin.y && endRect.origin.y > contentOffsetY2 - 40)
+            {
+                rectY = contentOffsetY2 - visibleHeight + 15
+                rectY = rectY < 0 ? 0 : rectY
+            }
+            else if endRect.origin.y < UPTextViewSelection.end.origin.y && endRect.origin.y < contentOffsetY + 30
+            {
+                rectY = contentOffsetY - 15
+                rectY = rectY < 0 ? 0 : rectY
+            }
+            else if (startRect.origin.y < UPTextViewSelection.start.origin.y && startRect.origin.y < contentOffsetY + 30)
+            {
+                rectY = contentOffsetY - 15
+                rectY = rectY < 0 ? 0 : rectY
+            }
+            else if (startRect.origin.y > UPTextViewSelection.start.origin.y && startRect.origin.y > contentOffsetY2 - 40)
+            {
+                rectY = contentOffsetY2 - visibleHeight + 15
+                rectY = rectY < 0 ? 0 : rectY
+            }
+        }
+        return rectY
+    }
+    
+    func selectionJustBegan() ->Bool
+    {
+        return CGRectEqualToRect(UPTextViewSelection.start, CGRectZero) || CGRectEqualToRect(UPTextViewSelection.end, CGRectZero)
+    }
+    
+    func heightForRowAtIndexPath(indexPath: NSIndexPath, reuseIdentifier: String, textForTextView: (textView:UPEmbeddedTextView, indexPath:NSIndexPath) -> String) -> CGFloat {
+        
+        var superViewBounds = CGRectZero
+        if let superview = self.tableView.superview {
+            superViewBounds = superview.bounds;
+        }
+       
+        var currentCellInstance: UITableViewCell?
+        
+        if let mappedCell = offScreenCells[reuseIdentifier] as? UITableViewCell {
+            currentCellInstance = mappedCell
+        } else {
+            currentCellInstance = tableView.dequeueReusableCellWithIdentifier(reuseIdentifier) as? UITableViewCell
+        }
+        
+        // TODO: Possible enhancement: Do not request the reuse identifier, but an actual Cell instance? It should be in a block!
+        if currentCellInstance != nil{
+            return self.calculateHeightForConfiguredSizingCell(currentCellInstance!, tableView:tableView, indexPath: indexPath, superViewBounds:superViewBounds, textForTextView:textForTextView)
+        }
+        
+        return 0 // The cell couldn't be dequeued! Check the reuse identifier!
     }
 
 }

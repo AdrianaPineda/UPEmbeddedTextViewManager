@@ -31,11 +31,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     
     var testText3: NSString = "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."
     var testTexts: NSMutableArray!
+    var tableViewManager: UPManager!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.previousTextViewRect = CGSizeZero
         self.testTexts = [testText, testText2, testText3]
+        self.tableViewManager = UPManager(tableView: self.tableView)
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -92,7 +94,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
 
         if indexPath.section == 0 && (indexPath.row == 0 || indexPath.row == 1 || indexPath.row == 2) {
             
-            return self.tableView.heightForRowAtIndexPath(indexPath, reuseIdentifier: "testCell", textForTextView:{ (textView, indexPath) -> String in
+            return self.tableViewManager.heightForRowAtIndexPath(indexPath, reuseIdentifier: "testCell", textForTextView:{ (textView, indexPath) -> String in
                 
                 if let testText = self.testTexts[indexPath.row] as? String{
                     return testText
@@ -155,7 +157,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     }
     
     func textViewDidChangeSelection(textView: UITextView) {
-        self.tableView.updateTextViewZoomArea(textView)
+        self.tableViewManager.updateTextViewZoomArea(textView)
     }
     
     func textViewShouldBeginEditing(textView: UITextView) -> Bool {
@@ -166,8 +168,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     }
     
     func textViewDidBeginEditing(textView: UITextView) {
-        TextViewSelection.start = CGRectZero
-        TextViewSelection.end = CGRectZero
+        UPTextViewSelection.start = CGRectZero
+        UPTextViewSelection.end = CGRectZero
     }
     
     func textViewDidEndEditing(textView: UITextView) {
