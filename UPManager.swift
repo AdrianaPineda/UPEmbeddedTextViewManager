@@ -18,7 +18,7 @@ class UPManager: NSObject, UITextViewDelegate {
     var offScreenCells: NSMutableDictionary!
     weak var tableView: UITableView!
     let textViewSelection = UPTextViewSelection()
-    var managedTextViewsMetaData = NSMutableDictionary() // TODO: Should we use as key the object reference?
+    var managedTextViewsMetaData = NSMutableDictionary()
     var delegate: UITextViewDelegate?
     
     let defaultTopScrollingOffset: CGFloat = CGFloat(30)
@@ -346,4 +346,15 @@ class UPManager: NSObject, UITextViewDelegate {
     }
     
     // Mark: - Forward Invocation
+    
+    override func respondsToSelector(aSelector: Selector) -> Bool {
+        return super.respondsToSelector(aSelector) || self.delegate?.respondsToSelector(aSelector) == true
+    }
+    
+    override func forwardingTargetForSelector(aSelector: Selector) -> AnyObject? {
+        if self.delegate?.respondsToSelector(aSelector)==true{
+            return self.delegate
+        }
+        return super.forwardingTargetForSelector(aSelector)
+    }
 }
