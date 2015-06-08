@@ -21,6 +21,12 @@ class UPManager: NSObject, UITextViewDelegate {
     var managedTextViewsMetaData = NSMutableDictionary() // TODO: Should we use as key the object reference?
     var delegate: UITextViewDelegate?
     
+    let defaultTopScrollingOffset: CGFloat = CGFloat(30)
+    let defaultBottomScrollingOffset: CGFloat = CGFloat(40)
+    
+    var topScrollingOffset:CGFloat = CGFloat(-1)
+    var bottomScrollingOffset:CGFloat = CGFloat(-1)
+    
     init(delegate:UITextViewDelegate?, tableView: UITableView) {
         super.init()
         if let initializedTableView = tableView as UITableView?{
@@ -36,6 +42,23 @@ class UPManager: NSObject, UITextViewDelegate {
     }
     
     // Methods
+    func configureTopScrollingOffset(newTopScrollingOffset: CGFloat) {
+        
+        if newTopScrollingOffset < 0 {
+            self.topScrollingOffset = CGFloat(0)
+        } else {
+            self.topScrollingOffset = newTopScrollingOffset
+        }
+    }
+    
+    func configureBottomScrollingOffset(newBottomScrollingOffset: CGFloat) {
+        
+        if newBottomScrollingOffset < 0 {
+            self.bottomScrollingOffset = CGFloat(0)
+        } else {
+            self.bottomScrollingOffset = newBottomScrollingOffset
+        }
+    }
     
     func configureTextView(textView: UPEmbeddedTextView, atIndexPath indexPath:NSIndexPath, textForTextView: (textView:UPEmbeddedTextView, indexPath:NSIndexPath) -> String) {
         
@@ -110,10 +133,14 @@ class UPManager: NSObject, UITextViewDelegate {
     
     // Mark: -
     
-    func updateTextViewZoomArea(textView: UITextView){
+    func updateTextViewZoomArea(textView: UITextView) {
+        
+        // Gets current selection in the coordinate space of the text view
         let selectionRange :UITextRange = textView.selectedTextRange!
         var selectionStartRect: CGRect = textView.caretRectForPosition(selectionRange.start)
         var selectionEndRect: CGRect = textView.caretRectForPosition(selectionRange.end)
+        
+        // Transforms current selection to the table view's coordinate space
         selectionStartRect = textView.convertRect(selectionStartRect, toView: self.tableView)
         selectionEndRect = textView.convertRect(selectionEndRect, toView: self.tableView)
         
@@ -139,6 +166,21 @@ class UPManager: NSObject, UITextViewDelegate {
         self.textViewSelection.end = selectionEndRect
     }
     
+    func configureTopAndBottomScrollingOffsetsForVisibleHeight(visibleHeight:CGFloat) {
+        
+        if topScrollingOffset < 0 {
+            topScrollingOffset = defaultTopScrollingOffset
+        } else if topScrollingOffset > (visibleHeight/4) {
+            topScrollingOffset = floor(visibleHeight/4)
+        }
+        
+        if bottomScrollingOffset < 0 {
+            bottomScrollingOffset = defaultBottomScrollingOffset
+        } else if bottomScrollingOffset > (visibleHeight/4) {
+            bottomScrollingOffset = floor(visibleHeight/4)
+        }
+    }
+    
     func yCoordinateForEnclosingRectWithStartRect(startRect:CGRect, endRect:CGRect, visibleHeight:CGFloat) -> CGFloat
     {
         let contentOffsetY: CGFloat = self.tableView.contentOffset.y
@@ -152,22 +194,28 @@ class UPManager: NSObject, UITextViewDelegate {
         }
         else
         {
-            if (endRect.origin.y > self.textViewSelection.end.origin.y && endRect.origin.y > contentOffsetY2 - 40)
+            configureTopAndBottomScrollingOffsetsForVisibleHeight(visibleHeight)
+            // The |_| start of my current selection ends her|e|
+            // Current end selection is scrolling towards the bottom
+            if (endRect.origin.y > self.textViewSelection.end.origin.y && endRect.origin.y > contentOffsetY2 - bottomScrollingOffset)
             {
                 rectY = contentOffsetY2 - visibleHeight + 15
                 rectY = rectY < 0 ? 0 : rectY
             }
-            else if endRect.origin.y < self.textViewSelection.end.origin.y && endRect.origin.y < contentOffsetY + 30
+            // Current end selection is scrolling towards the top
+            else if endRect.origin.y < self.textViewSelection.end.origin.y && endRect.origin.y < contentOffsetY + topScrollingOffset
             {
                 rectY = contentOffsetY - 15
                 rectY = rectY < 0 ? 0 : rectY
             }
-            else if (startRect.origin.y < self.textViewSelection.start.origin.y && startRect.origin.y < contentOffsetY + 30)
+            // Current start selection is scrolling towards the top
+            else if (startRect.origin.y < self.textViewSelection.start.origin.y && startRect.origin.y < contentOffsetY + topScrollingOffset)
             {
                 rectY = contentOffsetY - 15
                 rectY = rectY < 0 ? 0 : rectY
             }
-            else if (startRect.origin.y > self.textViewSelection.start.origin.y && startRect.origin.y > contentOffsetY2 - 40)
+            // Current start selection is scrolling towards the bottom
+            else if (startRect.origin.y > self.textViewSelection.start.origin.y && startRect.origin.y > contentOffsetY2 - bottomScrollingOffset)
             {
                 rectY = contentOffsetY2 - visibleHeight + 15
                 rectY = rectY < 0 ? 0 : rectY
