@@ -13,12 +13,20 @@ class UPTextViewSelection {
     var end: CGRect = CGRectZero
 }
 
+class UPManagedTextViewMetaData {
+    var previousRectDictionaryRepresentation: NSDictionary?
+    var shouldCollapseHeightIfNeeded: Bool = true
+    var indexPath: NSIndexPath?
+    var reusableIdentifier: String!
+}
+
 class UPManager: NSObject, UITextViewDelegate {
     
     var offScreenCells: NSMutableDictionary!
     weak var tableView: UITableView!
     let textViewSelection = UPTextViewSelection()
     var managedTextViewsMetaData = NSMutableDictionary()
+    var managedTextViewsMapper = NSMutableDictionary()
     var delegate: UITextViewDelegate?
     
     let defaultTopScrollingOffset: CGFloat = CGFloat(30)
@@ -66,7 +74,25 @@ class UPManager: NSObject, UITextViewDelegate {
     func configureTextView(textView: UPEmbeddedTextView, atIndexPath indexPath:NSIndexPath, textForTextView: (textView:UPEmbeddedTextView, indexPath:NSIndexPath) -> String) {
         
         textView.text = textForTextView(textView:textView, indexPath:indexPath)
-        
+        textView.textViewHeightConstraint.constant = self.sizeForTextView(textView, atIndexPath: indexPath).height
+        textView.removeConstraint(textView.textViewHeightConstraint)
+        textView.addConstraint(textView.textViewHeightConstraint) //TODO: Might be added at the 'beginning'
+    }
+    
+    private func sizeForTextView(textView: UPEmbeddedTextView, atIndexPath indexPath: NSIndexPath) -> CGSize{
+        var textViewSize = textView.sizeThatFits(CGSizeMake(CGRectGetWidth(self.tableView.bounds), CGFloat.max))
+        if let metaData = self.metaDataForReuseIdentifier(textView.reuseIdentifier, indexPath: indexPath) as UPManagedTextViewMetaData?{
+            if textView.enableAutomaticCollapse &&
+                metaData.shouldCollapseHeightIfNeeded &&
+                textViewSize.height > textView.collapsedHeigthConstant{
+                    textViewSize.height = textView.collapsedHeigthConstant
+//                    self.removeChangingTextViewMapForReuseIdentifier(textView.reuseIdentifier, atIndexPath: indexPath)
+            }
+        }
+        else if textView.enableAutomaticCollapse && textViewSize.height > textView.collapsedHeigthConstant{
+            textViewSize.height = textView.collapsedHeigthConstant
+        }
+        return textViewSize
     }
     
     func textViewsForCell(cell: UITableViewCell) -> NSArray {
@@ -82,7 +108,7 @@ class UPManager: NSObject, UITextViewDelegate {
     func findTextViewsOfView(view: UIView, textViews:NSMutableArray) {
         
         if let currentTextView = view as? UPEmbeddedTextView {
-            
+            self.addBaseManagedTextViewMapperIfNeededForTextView(currentTextView)
             textViews.addObject(currentTextView)
             
         } else {
@@ -100,10 +126,6 @@ class UPManager: NSObject, UITextViewDelegate {
     // advantages of iOS 8
     func calculateHeightForConfiguredSizingCell(sizingCell: UITableViewCell, tableView: UITableView, indexPath: NSIndexPath, superViewBounds:CGRect,  textForTextView: (textView:UPEmbeddedTextView, indexPath:NSIndexPath) -> String)->CGFloat {
         
-        // TODO: Need to find a way to update the frame with the EXACT required height, so as
-        // to avoid autolayout warnings for assigning the height constraint's constant to a
-        // value that is greater than the current cell height!
-        
         var textViews = textViewsForCell(sizingCell)
         
         var absolutePaddingHeight:CGFloat = 0
@@ -113,11 +135,6 @@ class UPManager: NSObject, UITextViewDelegate {
             if let currentTextView = textView as? UPEmbeddedTextView {
                 
                 self.configureTextView(currentTextView, atIndexPath: indexPath, textForTextView:textForTextView)
-                
-                let textViewSize:CGSize = currentTextView.sizeThatFits(CGSizeMake(CGRectGetWidth(tableView.bounds), CGFloat.max))
-                currentTextView.textViewHeightConstraint.constant = textViewSize.height
-                currentTextView.removeConstraint(currentTextView.textViewHeightConstraint)
-                currentTextView.addConstraint(currentTextView.textViewHeightConstraint) //TODO: Might be added at the 'beginning'
                 absolutePaddingHeight += currentTextView.getAbsolutePaddingHeight()
             }
             
@@ -253,28 +270,52 @@ class UPManager: NSObject, UITextViewDelegate {
     
     // Mark: -
     
-    func setManagedUPTextView(textView: UPEmbeddedTextView){
+    func addManagedUPTextView(textView: UPEmbeddedTextView){
         if !self.isManagedUPTextView(textView){
             textView.upId = self.managedTextViewsMetaData.count
+            let metaData = UPManagedTextViewMetaData()
+            metaData.reusableIdentifier = textView.reuseIdentifier
+            self.managedTextViewsMetaData[textView.upId] = metaData
             let previousSize = CGSizeZero
             self.setManagedUPTextView(textView, previousSize: previousSize)
         }
     }
     
     func setManagedUPTextView(textView: UPEmbeddedTextView, previousSize:CGSize){
-        self.managedTextViewsMetaData[textView.upId] = CGSizeCreateDictionaryRepresentation(previousSize)
+        if let metaData = self.metaDataForManagedTextView(textView) as UPManagedTextViewMetaData?{
+            metaData.previousRectDictionaryRepresentation = CGSizeCreateDictionaryRepresentation(previousSize)
+        }
     }
     
     private func isManagedUPTextView(textView: UPEmbeddedTextView) -> Bool{
-        if (self.previousSizeDictionaryRepresentation(textView) as NSDictionary).count > 0{
+        if let metaData = self.metaDataForManagedTextView(textView) as UPManagedTextViewMetaData?{
             return true
         }
         return false
     }
     
+    private func metaDataForManagedTextView(textView: UPEmbeddedTextView) -> UPManagedTextViewMetaData?{
+        return self.metaDataAtIndex(textView.upId)
+    }
+    
+    private func metaDataForReuseIdentifier(reuseId: String, indexPath: NSIndexPath) -> UPManagedTextViewMetaData?{
+        if let indexPaths = self.managedTextViewsMapper[reuseId] as? NSMutableDictionary{
+            if let upId = indexPaths[NSIndexPath(forRow: indexPath.row, inSection: indexPath.section)] as? NSInteger{
+                return self.metaDataAtIndex(upId)
+            }
+        }
+        return nil
+    }
+    
+    private func metaDataAtIndex(index: Int) -> UPManagedTextViewMetaData?{
+        return self.managedTextViewsMetaData[index] as? UPManagedTextViewMetaData
+    }
+    
     private func previousSizeDictionaryRepresentation(textView: UPEmbeddedTextView) -> CFDictionary{
-        if let managedTextViewPreviousRect = self.managedTextViewsMetaData[textView.upId] as? NSDictionary{
-            return managedTextViewPreviousRect
+        if let metaData = self.metaDataForManagedTextView(textView) as UPManagedTextViewMetaData?{
+            if let managedTextViewPreviousRect = metaData.previousRectDictionaryRepresentation as NSDictionary?{
+                return managedTextViewPreviousRect
+            }
         }
         return [:]
     }
@@ -325,6 +366,7 @@ class UPManager: NSObject, UITextViewDelegate {
                 shouldBeginEditing = delegate.textViewShouldBeginEditing!(textView)
             }
         }
+        self.textView(textView, shouldCollapseIfNeeded: false)
         if shouldBeginEditing{
             self.tableView.beginUpdates()
             self.tableView.endUpdates()
@@ -336,12 +378,50 @@ class UPManager: NSObject, UITextViewDelegate {
     }
     
     func textViewDidEndEditing(textView: UITextView) {
+        self.textView(textView, shouldCollapseIfNeeded: true)
         self.tableView.beginUpdates()
         self.tableView.endUpdates()
         if let delegate = self.delegate as UITextViewDelegate?{
             if delegate.respondsToSelector("textViewDidEndEditing:"){
                 delegate.textViewDidEndEditing!(textView)
             }
+        }
+    }
+    
+    // Mark: - Utilities
+    
+    private func textView(textView: UITextView, shouldCollapseIfNeeded shouldCollapse:Bool){
+        if let upTextView = textView as? UPEmbeddedTextView{
+            if upTextView.enableAutomaticCollapse{
+                if let metaData = self.metaDataForManagedTextView(upTextView) as UPManagedTextViewMetaData?{
+                    let center = upTextView.center
+                    let rootViewPoint = upTextView.superview!.convertPoint(center, toView:self.tableView)
+                    if let indexPath = self.tableView.indexPathForRowAtPoint(rootViewPoint) as NSIndexPath?{
+                        metaData.indexPath = NSIndexPath(forRow: indexPath.row, inSection: indexPath.section)
+                        self.enqueueChangingTextView(upTextView, atIndexPath: indexPath)
+                    }
+                    metaData.shouldCollapseHeightIfNeeded = shouldCollapse
+                }
+            }
+        }
+    }
+    
+    private func addBaseManagedTextViewMapperIfNeededForTextView(textView: UPEmbeddedTextView){
+        if self.managedTextViewsMapper[textView.reuseIdentifier] == nil{
+            // Gotta add this reuse identifier
+            self.managedTextViewsMapper[textView.reuseIdentifier] = NSMutableDictionary()
+        }
+    }
+    
+    private func enqueueChangingTextView(textView: UPEmbeddedTextView!, atIndexPath indexPath: NSIndexPath!){
+        if let indexPaths = self.managedTextViewsMapper[textView.reuseIdentifier] as? NSMutableDictionary{
+            indexPaths.setObject(textView.upId, forKey: NSIndexPath(forRow: indexPath.row, inSection: indexPath.section))
+        }
+    }
+    
+    private func removeChangingTextViewMapForReuseIdentifier(reuseId: String, atIndexPath indexPath:NSIndexPath){
+        if let indexPaths = self.managedTextViewsMapper[reuseId] as? NSMutableDictionary{
+            indexPaths.removeObjectForKey(NSIndexPath(forRow: indexPath.row, inSection: indexPath.section))
         }
     }
     

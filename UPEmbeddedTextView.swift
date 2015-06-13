@@ -17,9 +17,10 @@ public class UPEmbeddedTextView: UITextView {
     var textViewWidthConstraint: NSLayoutConstraint?
     var textViewHeightConstraint:NSLayoutConstraint!
     var defaultHeightConstant:CGFloat = 30
-    var collapsedHeigthConstant: CGFloat = 10
+    var collapsedHeigthConstant: CGFloat = 125
     var enableAutomaticCollapse: Bool = true
     var upId: NSInteger = -1
+    var reuseIdentifier: String! = "defaultUPTextView"
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
@@ -66,7 +67,7 @@ public class UPEmbeddedTextView: UITextView {
     public override var delegate:UITextViewDelegate?{
         didSet{
             if let upDelegate = self.delegate as? UPManager{
-                upDelegate.setManagedUPTextView(self)
+                upDelegate.addManagedUPTextView(self)
             }
         }
     }
