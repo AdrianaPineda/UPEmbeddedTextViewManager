@@ -13,17 +13,9 @@
 
 import UIKit
 
-// EPIC: Try to reduce the amount of preparation the client requires in order to begin
-// using the TextView API. For example the Keyboard delegation, the current properties
-// being used by this controller, the cell's height calculation and the delegate methods
-// of UITextView. We should focus in making the life easier for those using our library,
-// not making them spend 4 hours trying to understand how to set up everything!
-
 class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegate {
 
-    // TODO: How to avoid client requiring all these properties??
     var previousTextViewRect: CGSize!
-    @IBOutlet weak var widthConstraint: NSLayoutConstraint!
     @IBOutlet weak var tableView: UITableView!
     var testText: NSString = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."
     
@@ -38,46 +30,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
         self.previousTextViewRect = CGSizeZero
         self.testTexts = [testText, testText2, testText3]
         self.tableViewManager = UPManager(delegate:self, tableView: self.tableView)
+        self.tableViewManager.startListeningForKeyboardEvents()
         // Do any additional setup after loading the view, typically from a nib.
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
-        super.viewWillAppear(animated)
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-        super.viewWillDisappear(animated)
-    }
-    
-    func keyboardWillShow(notification: NSNotification)
-    {
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
-            
-            var contentInsets = self.tableView.contentInset
-            contentInsets = UIEdgeInsets(top: contentInsets.top, left: contentInsets.left, bottom: keyboardSize.height + UIApplication.sharedApplication().statusBarFrame.size.height, right: contentInsets.right)
-            
-            if keyboardSize.height > 0
-            {
-                self.tableView.contentInset = contentInsets
-                self.tableView.scrollIndicatorInsets = contentInsets
-            }
-        }
-    }
-    
-    func keyboardWillHide(notification: NSNotification)
-    {
-        var contentInsets = self.tableView.contentInset
-        contentInsets = UIEdgeInsets(top: contentInsets.top, left: contentInsets.left, bottom: 0, right: contentInsets.right)
-        self.tableView.contentInset = contentInsets
-        self.tableView.scrollIndicatorInsets = contentInsets
     }
     
     // MARK: - UITableViewDataSource

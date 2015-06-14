@@ -13,11 +13,9 @@ public class UPEmbeddedTextView: UITextView {
     let UPContainerInset = UIEdgeInsetsMake(13, 0, 8, 0)
     let UPContentInset = UIEdgeInsetsMake(2, 0, 2, 0)
     
-    var previousRect: CGRect! = CGRectZero
-    var textViewWidthConstraint: NSLayoutConstraint?
     var textViewHeightConstraint:NSLayoutConstraint!
     var defaultHeightConstant:CGFloat = 30
-    var collapsedHeigthConstant: CGFloat = 125
+    var collapsedHeightConstant: CGFloat = 125
     var enableAutomaticCollapse: Bool = true
     var upId: NSInteger = -1
     var reuseIdentifier: String! = "defaultUPTextView"
@@ -59,7 +57,7 @@ public class UPEmbeddedTextView: UITextView {
         }
     }
     
-    public func getAbsolutePaddingHeight() -> CGFloat {
+    func getAbsolutePaddingHeight() -> CGFloat {
         
         return abs(UPContainerInset.top) + abs(UPContainerInset.bottom) + abs(UPContentInset.top) + abs(UPContentInset.bottom)
     }

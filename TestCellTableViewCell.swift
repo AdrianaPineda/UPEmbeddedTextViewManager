@@ -16,7 +16,6 @@ import UIKit
 class TestCellTableViewCell: UITableViewCell {
 
     @IBOutlet weak var textView: UPEmbeddedTextView!
-    var widthConstraint: NSLayoutConstraint?
     
     override func awakeFromNib() {
         super.awakeFromNib()

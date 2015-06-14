@@ -63,7 +63,6 @@
                     </view>
                     <connections>
                         <outlet property="tableView" destination="IxU-WY-D1p" id="vzH-27-ggg"/>
-                        <outlet property="widthConstraint" destination="ksu-2B-dVj" id="LOR-41-7fc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
