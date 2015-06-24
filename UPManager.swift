@@ -13,6 +13,10 @@ class UPTextViewSelection {
     var end: CGRect = CGRectZero
 }
 
+/**
+ * Manages data related to the Text View
+ * used when its height must change
+ */
 class UPManagedTextViewMetaData {
     var previousRectDictionaryRepresentation: NSDictionary?
     var shouldCollapseHeightIfNeeded: Bool = true
@@ -24,8 +28,14 @@ class UPManager: NSObject, UITextViewDelegate {
     private var offScreenCells: NSMutableDictionary!
     private weak var tableView: UITableView!
     private let textViewSelection = UPTextViewSelection()
+
+    // Stores the metadata related to every text view present in the table inside a NSMutableDictionary
     private var managedTextViewsMetaData = NSMutableDictionary()
+    
+    // Stores all text views that need to be updated (i.e. its height must change) inside a 
+    // NSMutableDictionary => [key: text view reuse identifier, value: [key: index path, value: upId]]
     private var managedTextViewsMapper = NSMutableDictionary()
+
     var delegate: UITextViewDelegate?
     
     private let defaultTopScrollingOffset: CGFloat = CGFloat(30)

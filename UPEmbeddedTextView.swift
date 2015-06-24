@@ -17,7 +17,9 @@ public class UPEmbeddedTextView: UITextView {
     var defaultHeightConstant:CGFloat = 30
     var collapsedHeightConstant: CGFloat = 125
     var enableAutomaticCollapse: Bool = true
+    // Integer that uniquely identifies the text view
     var upId: NSInteger = -1
+    // Text view reuse identifier
     var reuseIdentifier: String! = "defaultUPTextView"
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
