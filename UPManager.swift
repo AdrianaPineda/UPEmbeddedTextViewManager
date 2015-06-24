@@ -16,7 +16,6 @@ class UPTextViewSelection {
 class UPManagedTextViewMetaData {
     var previousRectDictionaryRepresentation: NSDictionary?
     var shouldCollapseHeightIfNeeded: Bool = true
-    var indexPath: NSIndexPath?
     var reusableIdentifier: String!
 }
 
@@ -226,7 +225,7 @@ class UPManager: NSObject, UITextViewDelegate {
                 metaData.shouldCollapseHeightIfNeeded &&
                 textViewSize.height > textView.collapsedHeightConstant{
                     textViewSize.height = textView.collapsedHeightConstant
-//                    self.removeChangingTextViewMapForReuseIdentifier(textView.reuseIdentifier, atIndexPath: indexPath)
+                    self.removeChangingTextViewMapForReuseIdentifier(textView.reuseIdentifier, atIndexPath: indexPath)
             }
         }
         else if textView.enableAutomaticCollapse && textViewSize.height > textView.collapsedHeightConstant{
@@ -336,7 +335,7 @@ class UPManager: NSObject, UITextViewDelegate {
     }
     
     private func enqueueChangingTextView(textView: UPEmbeddedTextView!, atIndexPath indexPath: NSIndexPath!){
-        if let indexPaths = self.managedTextViewsMapper[textView.reuseIdentifier] as? NSMutableDictionary{
+        if let indexPaths = self.managedTextViewsMapper[textView.reuseIdentifier] as? NSMutableDictionary {
             indexPaths.setObject(textView.upId, forKey: NSIndexPath(forRow: indexPath.row, inSection: indexPath.section))
         }
     }
@@ -418,7 +417,6 @@ class UPManager: NSObject, UITextViewDelegate {
                     let center = upTextView.center
                     let rootViewPoint = upTextView.superview!.convertPoint(center, toView:self.tableView)
                     if let indexPath = self.tableView.indexPathForRowAtPoint(rootViewPoint) as NSIndexPath?{
-                        metaData.indexPath = NSIndexPath(forRow: indexPath.row, inSection: indexPath.section)
                         self.enqueueChangingTextView(upTextView, atIndexPath: indexPath)
                     }
                     metaData.shouldCollapseHeightIfNeeded = shouldCollapse

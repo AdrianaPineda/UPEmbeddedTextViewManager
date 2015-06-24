@@ -64,7 +64,7 @@ public class UPEmbeddedTextView: UITextView {
     
     public override var delegate:UITextViewDelegate?{
         didSet{
-            if let upDelegate = self.delegate as? UPManager{
+            if let upDelegate = self.delegate as? UPManager {
                 upDelegate.addManagedUPTextView(self)
             }
         }
