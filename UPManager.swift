@@ -222,9 +222,12 @@ class UPManager: NSObject, UITextViewDelegate {
     
     private func configureTextView(textView: UPEmbeddedTextView, atIndexPath indexPath:NSIndexPath, textForTextView: (textView:UPEmbeddedTextView, indexPath:NSIndexPath) -> String) {
         
+        if (textView.textViewHeightConstraint != nil) {
+            textView.removeConstraint(textView.textViewHeightConstraint)
+        }
+        
         textView.text = textForTextView(textView:textView, indexPath:indexPath)
-        textView.textViewHeightConstraint.constant = self.sizeForTextView(textView, atIndexPath: indexPath).height
-        textView.removeConstraint(textView.textViewHeightConstraint)
+        textView.textViewHeightConstraint.constant = self.sizeForTextView(textView, atIndexPath: indexPath).height + textView.getAbsolutePaddingHeight()
         textView.addConstraint(textView.textViewHeightConstraint) //Might be added at the 'beginning'
     }
     
