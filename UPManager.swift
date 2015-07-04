@@ -367,7 +367,8 @@ class UPManager: NSObject, UITextViewDelegate {
         if let upTextView = textView as? UPEmbeddedTextView{
             if self.isManagedUPTextView(upTextView){
                 let currentSize: CGSize = textView.sizeThatFits(CGSizeMake(textView.frame.width, CGFloat.max));
-                if (!CGSizeEqualToSize(currentSize, self.previousSizeForUPTextView(upTextView))) {
+                let previousSize = self.previousSizeForUPTextView(upTextView)
+                if (!CGSizeEqualToSize(currentSize, previousSize)) {
                     self.setManagedUPTextView(upTextView, previousSize: currentSize)
                     if !CGSizeEqualToSize(currentSize, CGSizeZero)
                     {
