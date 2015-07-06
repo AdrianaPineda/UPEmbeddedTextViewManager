@@ -21,6 +21,7 @@ class UPManagedTextViewMetaData {
     var previousRectDictionaryRepresentation: NSDictionary?
     var shouldCollapseHeightIfNeeded: Bool = true
     var reusableIdentifier: String!
+    var currentWidth: CGFloat?
 }
 
 class UPManager: NSObject, UITextViewDelegate {
@@ -171,14 +172,11 @@ class UPManager: NSObject, UITextViewDelegate {
         
         var textViews = textViewsForCell(sizingCell)
         
-        var absolutePaddingHeight:CGFloat = 0
-        
         for textView in textViews {
             
             if let currentTextView = textView as? UPEmbeddedTextView {
                 
                 self.configureTextView(currentTextView, atIndexPath: indexPath, textForTextView:textForTextView)
-                absolutePaddingHeight += currentTextView.getAbsolutePaddingHeight()
             }
             
         }
@@ -231,8 +229,25 @@ class UPManager: NSObject, UITextViewDelegate {
         textView.addConstraint(textView.textViewHeightConstraint) //Might be added at the 'beginning'
     }
     
-    private func sizeForTextView(textView: UPEmbeddedTextView, atIndexPath indexPath: NSIndexPath) -> CGSize{
-        var textViewSize = textView.sizeThatFits(CGSizeMake(CGRectGetWidth(self.tableView.bounds), CGFloat.max))
+    private func getCurrentWidthForTextView(textView: UPEmbeddedTextView, atIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        var textViewWidth = CGRectGetWidth(self.tableView.bounds)
+        
+        if let textViewMetaData = self.metaDataForReuseIdentifier(textView.reuseIdentifier, indexPath: indexPath) as UPManagedTextViewMetaData? {
+            
+            if let currentWidth = textViewMetaData.currentWidth {
+                textViewWidth = currentWidth
+            }
+        }
+        
+        return textViewWidth
+    }
+    
+    private func sizeForTextView(textView: UPEmbeddedTextView, atIndexPath indexPath: NSIndexPath) -> CGSize {
+
+        let textViewWidth = getCurrentWidthForTextView(textView, atIndexPath: indexPath)
+        var textViewSize = textView.sizeThatFits(CGSizeMake(textViewWidth, CGFloat.max))
+        
         if let metaData = self.metaDataForReuseIdentifier(textView.reuseIdentifier, indexPath: indexPath) as UPManagedTextViewMetaData?{
             if textView.enableAutomaticCollapse &&
                 metaData.shouldCollapseHeightIfNeeded &&
@@ -241,7 +256,7 @@ class UPManager: NSObject, UITextViewDelegate {
                     self.removeChangingTextViewMapForReuseIdentifier(textView.reuseIdentifier, atIndexPath: indexPath)
             }
         }
-        else if textView.enableAutomaticCollapse && textViewSize.height > textView.collapsedHeightConstant{
+        else if textView.enableAutomaticCollapse && textViewSize.height > textView.collapsedHeightConstant {
             textViewSize.height = textView.collapsedHeightConstant
         }
         return textViewSize
@@ -367,16 +382,23 @@ class UPManager: NSObject, UITextViewDelegate {
                 delegate.textViewDidChange!(textView)
             }
         }
-        if let upTextView = textView as? UPEmbeddedTextView{
+        if let upTextView = textView as? UPEmbeddedTextView {
             if self.isManagedUPTextView(upTextView){
-                let currentSize: CGSize = textView.sizeThatFits(CGSizeMake(textView.frame.width, CGFloat.max));
+                
+                let fixedWidth = upTextView.frame.width
+                let currentSize: CGSize = upTextView.sizeThatFits(CGSizeMake(fixedWidth, CGFloat.max));
                 let previousSize = self.previousSizeForUPTextView(upTextView)
+                
                 if (!CGSizeEqualToSize(currentSize, previousSize)) {
                     self.setManagedUPTextView(upTextView, previousSize: currentSize)
                     if !CGSizeEqualToSize(currentSize, CGSizeZero)
                     {
                         self.tableView.beginUpdates()
                         self.tableView.endUpdates()
+                        
+                        if let metaData = self.metaDataForManagedTextView(upTextView) as UPManagedTextViewMetaData? {
+                            metaData.currentWidth = fixedWidth
+                        }
                     }
                 }
                 
