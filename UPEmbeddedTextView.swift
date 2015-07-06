@@ -10,7 +10,7 @@ import UIKit
 
 public class UPEmbeddedTextView: UITextView {
     
-    let UPContainerInset = UIEdgeInsetsMake(13, 0, 8, 0)
+    let UPContainerInset = UIEdgeInsetsMake(13, 0, 0, 0)
     let UPContentInset = UIEdgeInsetsMake(2, 0, 2, 0)
     
     var textViewHeightConstraint:NSLayoutConstraint!
@@ -45,13 +45,13 @@ public class UPEmbeddedTextView: UITextView {
             UIEdgeInsetsMake(UPContainerInset.top,
                 UPContainerInset.left,
                 UPContainerInset.bottom,
-                self.textContainerInset.right)
+                UPContainerInset.right)
         
         self.contentInset =
             UIEdgeInsetsMake(UPContentInset.top,
-                self.contentInset.left,
+                UPContentInset.left,
                 UPContentInset.bottom,
-                self.contentInset.right)
+                UPContentInset.right)
         
         if (self.textViewHeightConstraint == nil){
             self.setTranslatesAutoresizingMaskIntoConstraints(false)

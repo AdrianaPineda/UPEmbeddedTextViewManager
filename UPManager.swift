@@ -374,8 +374,19 @@ class UPManager: NSObject, UITextViewDelegate {
         }
     }
     
-    // MARK: - UITextViewDelegate
+    private func configureWidthForTextView(textView: UPEmbeddedTextView) {
+        
+        let fixedWidth = textView.frame.width
+        if let metaData = self.metaDataForManagedTextView(textView) as UPManagedTextViewMetaData? {
+            
+            if metaData.currentWidth != fixedWidth {
+                metaData.currentWidth = fixedWidth
+            }
+            
+        }
+    }
     
+    // MARK: - UITextViewDelegate
     func textViewDidChange(textView: UITextView) {
         if let delegate = self.delegate as UITextViewDelegate?{
             if delegate.respondsToSelector("textViewDidChange:"){
@@ -396,12 +407,11 @@ class UPManager: NSObject, UITextViewDelegate {
                         self.tableView.beginUpdates()
                         self.tableView.endUpdates()
                         
-                        if let metaData = self.metaDataForManagedTextView(upTextView) as UPManagedTextViewMetaData? {
-                            metaData.currentWidth = fixedWidth
-                        }
                     }
+                    
                 }
                 
+//                configureWidthForTextView(upTextView)
             }
         } 
     }
@@ -423,11 +433,18 @@ class UPManager: NSObject, UITextViewDelegate {
             }
         }
         self.textView(textView, shouldCollapseIfNeeded: false)
-        if shouldBeginEditing{
+        if shouldBeginEditing {
+            
+            if let upTextView = textView as? UPEmbeddedTextView {
+                configureWidthForTextView(upTextView)
+            }
+
             self.tableView.beginUpdates()
             self.tableView.endUpdates()
             self.textViewSelection.start = CGRectZero
             self.textViewSelection.end = CGRectZero
+            
+            
         }
         
         return shouldBeginEditing
