@@ -59,6 +59,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
                     return testText
                 }
                 return ""
+                }, initialMetaDataForTextView:{ (textView, indexPath) -> UPManagedTextViewMetaData in
+                    return UPManagedTextViewMetaData(reuseIdentifier: "testCell", enableAutomaticCollapse: true, collapsedHeightConstant: 125)
             })
         }
         
@@ -67,8 +69,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 
-        if let cell = tableView.dequeueReusableCellWithIdentifier("testCell", forIndexPath: indexPath) as? TestCellTableViewCell{
-            cell.textView.delegate = self.tableViewManager
+        if let cell = tableView.dequeueReusableCellWithIdentifier("testCell", forIndexPath: indexPath) as? TestCellTableViewCell {
+            let metaData = UPManagedTextViewMetaData(reuseIdentifier: "testCell", enableAutomaticCollapse: true, collapsedHeightConstant: 125)
+            self.tableViewManager.configureManagedTextView(cell.textView, initialMetaData:metaData)
             
             if let testText = self.testTexts[indexPath.row] as? String{
                 cell.textView.text = testText

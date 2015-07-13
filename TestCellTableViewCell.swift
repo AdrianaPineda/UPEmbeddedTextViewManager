@@ -15,7 +15,7 @@ import UIKit
 
 class TestCellTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var textView: UPEmbeddedTextView!
+    @IBOutlet weak var textView: UITextView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
