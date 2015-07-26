@@ -46,6 +46,8 @@ class UPManager: NSObject, UITextViewDelegate {
     // Stores all text views that need to be updated (i.e. its height must change) inside a 
     // NSMutableDictionary => [key: text view reuse identifier, value: [key: index path, value: upId]]
     private var managedTextViewsMapper = NSMutableDictionary()
+    
+    private var fakeTextViewsMapper = NSMutableDictionary()
 
     var delegate: UITextViewDelegate?
     
@@ -138,9 +140,9 @@ class UPManager: NSObject, UITextViewDelegate {
         self.textViewSelection.end = selectionEndRect
     }
     
-    func addManagedUPTextView(textView: UITextView, metaData: UPManagedTextViewMetaData) {
-        if !self.isManagedUPTextView(textView){
-            textView.tag = self.managedTextViewsMetaData.count
+    func addFakeManagedUPTextView(textView: UITextView, metaData: UPManagedTextViewMetaData, reuseIdentifier: String) {
+        // TODO: Rework (reuse)
+        if !self.isFakeManagedUPTextViewWithReuseIdentifier(reuseIdentifier) {
             if (metaData.textViewHeightConstraint == nil) {
                 textView.setTranslatesAutoresizingMaskIntoConstraints(false)
                 metaData.textViewHeightConstraint = NSLayoutConstraint(item: textView,
@@ -151,9 +153,17 @@ class UPManager: NSObject, UITextViewDelegate {
                     multiplier: 1,
                     constant: self.defaultHeightConstant)
             }
-            self.managedTextViewsMetaData[textView.tag] = metaData
-            
             textView.addConstraint(metaData.textViewHeightConstraint)
+            self.fakeTextViewsMapper[reuseIdentifier] = metaData
+//            let previousSize = CGSizeZero
+//            self.setManagedUPTextView(textView, previousSize: previousSize)
+        }
+    }
+    
+    func addManagedUPTextView(textView: UITextView, metaData: UPManagedTextViewMetaData) {
+        if !self.isManagedUPTextView(textView){
+            textView.tag = self.managedTextViewsMetaData.count + 1
+            self.managedTextViewsMetaData[textView.tag] = metaData
             let previousSize = CGSizeZero
             self.setManagedUPTextView(textView, previousSize: previousSize)
         }
@@ -254,10 +264,13 @@ class UPManager: NSObject, UITextViewDelegate {
     private func configureTextView(textView: UITextView, atIndexPath indexPath:NSIndexPath,
         textForTextView: (textView:UITextView, indexPath:NSIndexPath) -> String,
         initialMetaDataForTextView: (textView: UITextView, indexPath: NSIndexPath) -> UPManagedTextViewMetaData) {
+            let textViewMetaData = initialMetaDataForTextView(textView: textView, indexPath: indexPath)
             textView.text = textForTextView(textView:textView, indexPath:indexPath)
-            self.addManagedUPTextView(textView, metaData: initialMetaDataForTextView(textView: textView, indexPath: indexPath))
-            if let metaData = self.metaDataForManagedTextView(textView) as UPManagedTextViewMetaData? {
-                metaData.textViewHeightConstraint.constant = self.sizeForTextView(textView, atIndexPath: indexPath).height + self.getAbsolutePaddingHeight()
+            self.addFakeManagedUPTextView(textView, metaData: textViewMetaData, reuseIdentifier: textViewMetaData.reusableIdentifier)
+//            self.addManagedUPTextView(textView, metaData: initialMetaDataForTextView(textView: textView, indexPath: indexPath))
+            
+            if let metaData = self.fakeMetaDataForReuseIdentifier(textViewMetaData.reusableIdentifier) as UPManagedTextViewMetaData? {
+                metaData.textViewHeightConstraint.constant = self.sizeForTextView(textView, atIndexPath: indexPath, reuseIdentifier: metaData.reusableIdentifier).height + self.getAbsolutePaddingHeight()
             }
     }
     
@@ -277,12 +290,12 @@ class UPManager: NSObject, UITextViewDelegate {
         return textViewWidth
     }
     
-    private func sizeForTextView(textView: UITextView, atIndexPath indexPath: NSIndexPath) -> CGSize {
+    private func sizeForTextView(textView: UITextView, atIndexPath indexPath: NSIndexPath, reuseIdentifier: String) -> CGSize {
 
         let textViewWidth = getCurrentWidthForTextView(textView, atIndexPath: indexPath)
         var textViewSize = textView.sizeThatFits(CGSizeMake(textViewWidth, CGFloat.max))
         
-        if let fakeMetaData = self.metaDataForManagedTextView(textView) as UPManagedTextViewMetaData?
+        if let fakeMetaData = self.fakeMetaDataForReuseIdentifier(reuseIdentifier) as UPManagedTextViewMetaData?
         {
             if let metaData = self.metaDataForReuseIdentifier(fakeMetaData.reusableIdentifier, indexPath: indexPath) as UPManagedTextViewMetaData?{
                 if metaData.enableAutomaticCollapse &&
@@ -369,6 +382,13 @@ class UPManager: NSObject, UITextViewDelegate {
         }
     }
     
+    private func isFakeManagedUPTextViewWithReuseIdentifier(reuseIdentifier: String) -> Bool {
+        if let metaData = self.fakeMetaDataForReuseIdentifier(reuseIdentifier) as UPManagedTextViewMetaData?{
+            return true
+        }
+        return false
+    }
+    
     private func isManagedUPTextView(textView: UITextView) -> Bool{
         if let metaData = self.metaDataForManagedTextView(textView) as UPManagedTextViewMetaData?{
             return true
@@ -385,6 +405,13 @@ class UPManager: NSObject, UITextViewDelegate {
             if let upId = indexPaths[NSIndexPath(forRow: indexPath.row, inSection: indexPath.section)] as? NSInteger{
                 return self.metaDataAtIndex(upId)
             }
+        }
+        return nil
+    }
+    
+    private func fakeMetaDataForReuseIdentifier(reuseId: String) -> UPManagedTextViewMetaData?{
+        if let metaData = self.fakeTextViewsMapper[reuseId] as? UPManagedTextViewMetaData{
+            return metaData
         }
         return nil
     }
@@ -577,6 +604,7 @@ class UPManager: NSObject, UITextViewDelegate {
     // MARK: - UITextView Configuration
     
     func configureManagedTextView(textView: UITextView, initialMetaData metaData:UPManagedTextViewMetaData) {
+        textView.delegate = self
         self.addManagedUPTextView(textView, metaData: metaData)
         self.configureInsetsForTextView(textView)
     }

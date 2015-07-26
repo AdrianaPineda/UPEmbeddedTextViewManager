@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -36,7 +36,7 @@
                                                 </textView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="bottomMargin" secondItem="uSI-Bt-H4x" secondAttribute="bottom" id="Hey-hA-fPs"/>
+                                                <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="uSI-Bt-H4x" secondAttribute="bottom" id="Hey-hA-fPs"/>
                                                 <constraint firstItem="uSI-Bt-H4x" firstAttribute="top" secondItem="RVn-Us-7Uw" secondAttribute="topMargin" id="RJQ-ox-VEe"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="uSI-Bt-H4x" secondAttribute="trailing" id="vo2-PH-GR6"/>
                                                 <constraint firstItem="uSI-Bt-H4x" firstAttribute="leading" secondItem="RVn-Us-7Uw" secondAttribute="leadingMargin" id="voG-Fz-V5b"/>

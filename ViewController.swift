@@ -53,14 +53,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
 
         if indexPath.section == 0 && (indexPath.row == 0 || indexPath.row == 1 || indexPath.row == 2) {
             
-            return self.tableViewManager.heightForRowAtIndexPath(indexPath, reuseIdentifier: "testCell", textForTextView:{ (textView, indexPath) -> String in
+            return self.tableViewManager.heightForRowAtIndexPath(indexPath, reuseIdentifier: "testCell", textForTextView: { (textView, indexPath) -> String in
                 
                 if let testText = self.testTexts[indexPath.row] as? String{
                     return testText
                 }
                 return ""
                 }, initialMetaDataForTextView:{ (textView, indexPath) -> UPManagedTextViewMetaData in
-                    return UPManagedTextViewMetaData(reuseIdentifier: "testCell", enableAutomaticCollapse: true, collapsedHeightConstant: 125)
+                    return UPManagedTextViewMetaData(reuseIdentifier: "testCell" + String(indexPath.row), enableAutomaticCollapse: true, collapsedHeightConstant: 125)
             })
         }
         
@@ -76,7 +76,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
             if let testText = self.testTexts[indexPath.row] as? String{
                 cell.textView.text = testText
             }
-            cell.textView.tag = indexPath.row
+//            cell.textView.tag = indexPath.row
             
             return cell
         }
