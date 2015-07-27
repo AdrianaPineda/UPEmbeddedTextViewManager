@@ -87,9 +87,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     // MARK: - UITextViewDelegate
     
     func textViewDidChange(textView: UITextView) {
-        if let cell = self.tableView.cellForRowAtIndexPath(NSIndexPath(forRow: textView.tag, inSection: 0)) as? TestCellTableViewCell{
-            if cell.textView == textView{
-                self.testTexts[textView.tag] = cell.textView.text
+        if let cell = self.tableView.cellForRowAtIndexPath(NSIndexPath(forRow: (textView.tag-1), inSection: 0)) as? TestCellTableViewCell{
+            if cell.textView == textView {
+                self.testTexts[(textView.tag-1)] = cell.textView.text
             }
         }
     }

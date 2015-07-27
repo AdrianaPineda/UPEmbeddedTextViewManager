@@ -57,7 +57,7 @@ class UPManager: NSObject, UITextViewDelegate {
     var topScrollingOffset:CGFloat = CGFloat(-1)
     var bottomScrollingOffset:CGFloat = CGFloat(-1)
     
-    let UPContainerInset = UIEdgeInsetsMake(13, 2, 0, 2)
+    let UPContainerInset = UIEdgeInsetsMake(13, 2, 8, 2)
     let UPContentInset = UIEdgeInsetsMake(2, 0, 2, 0)
     
     var defaultHeightConstant:CGFloat = 30
@@ -270,8 +270,6 @@ class UPManager: NSObject, UITextViewDelegate {
             
             let textViewMetaData = initialMetaDataForTextView(textView: textView, indexPath: indexPath)
             textView.text = textForTextView(textView:textView, indexPath:indexPath)
-            NSLog("textview: %@", textView.text)
-            
 //            self.addFakeManagedUPTextView(textView, metaData: textViewMetaData, reuseIdentifier: textViewMetaData.reusableIdentifier)
 //            self.addManagedUPTextView(textView, metaData: initialMetaDataForTextView(textView: textView, indexPath: indexPath))
             
@@ -296,15 +294,12 @@ class UPManager: NSObject, UITextViewDelegate {
     private func getCurrentWidthForTextView(textView: UITextView, atIndexPath indexPath: NSIndexPath, reuseIdentifier: String) -> CGFloat {
         
         var textViewWidth = CGRectGetWidth(self.tableView.bounds)
-//        if let fakeMetaData = self.metaDataForManagedTextView(textView) as UPManagedTextViewMetaData?
-//        {
-            if let textViewMetaData = self.metaDataForReuseIdentifier(reuseIdentifier, indexPath: indexPath) as UPManagedTextViewMetaData? {
-                
-                if let currentWidth = textViewMetaData.currentWidth {
-                    textViewWidth = currentWidth
-                }
+        if let textViewMetaData = self.metaDataForReuseIdentifier(reuseIdentifier, indexPath: indexPath) as UPManagedTextViewMetaData? {
+            
+            if let currentWidth = textViewMetaData.currentWidth {
+                textViewWidth = currentWidth
             }
-//        }
+        }
         
         return textViewWidth
     }
@@ -313,7 +308,7 @@ class UPManager: NSObject, UITextViewDelegate {
 
         let textViewWidth = getCurrentWidthForTextView(textView, atIndexPath: indexPath, reuseIdentifier: reuseIdentifier)
         var textViewSize = textView.sizeThatFits(CGSizeMake(textViewWidth, CGFloat.max))
-        
+
         if let fakeMetaData = self.fakeMetaDataForReuseIdentifier(reuseIdentifier) as UPManagedTextViewMetaData?
         {
             if let metaData = self.metaDataForReuseIdentifier(fakeMetaData.reusableIdentifier, indexPath: indexPath) as UPManagedTextViewMetaData?{
