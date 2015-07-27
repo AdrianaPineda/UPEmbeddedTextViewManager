@@ -70,7 +70,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 
         if let cell = tableView.dequeueReusableCellWithIdentifier("testCell", forIndexPath: indexPath) as? TestCellTableViewCell {
-            let metaData = UPManagedTextViewMetaData(reuseIdentifier: "testCell", enableAutomaticCollapse: true, collapsedHeightConstant: 125)
+            let metaData = UPManagedTextViewMetaData(reuseIdentifier: "testCell" + String(indexPath.row), enableAutomaticCollapse: true, collapsedHeightConstant: 125)
             self.tableViewManager.configureManagedTextView(cell.textView, initialMetaData:metaData)
             
             if let testText = self.testTexts[indexPath.row] as? String{
