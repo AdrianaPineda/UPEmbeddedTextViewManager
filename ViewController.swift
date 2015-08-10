@@ -53,13 +53,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
 
         if indexPath.section == 0 && (indexPath.row == 0 || indexPath.row == 1 || indexPath.row == 2) {
             
-            return self.tableViewManager.heightForRowAtIndexPath(indexPath, reuseIdentifier: "testCell", textForTextView: { (textView, indexPath) -> String in
+            return self.tableViewManager.heightForRowAtIndexPath(indexPath, cellReuseIdentifier: "testCell",
+                textForTextView: { (textView) -> String in
                 
                 if let testText = self.testTexts[indexPath.row] as? String{
                     return testText
                 }
                 return ""
-                }, initialMetaDataForTextView:{ (textView, indexPath) -> UPManagedTextViewMetaData in
+                }, initialMetaDataForTextView:{ (textView) -> UPManagedTextViewMetaData in
+                    // TODO: Check if this will work for cells with multiple text views!
                     return UPManagedTextViewMetaData(reuseIdentifier: "testCell" + String(indexPath.row), enableAutomaticCollapse: true, collapsedHeightConstant: 125)
             })
         }
