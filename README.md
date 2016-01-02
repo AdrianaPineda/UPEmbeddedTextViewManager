@@ -5,6 +5,8 @@
 [![License](https://img.shields.io/cocoapods/l/UPEmbeddedTextViewManager.svg?style=flat)](http://cocoapods.org/pods/UPEmbeddedTextViewManager)
 [![Platform](https://img.shields.io/cocoapods/p/UPEmbeddedTextViewManager.svg?style=flat)](http://cocoapods.org/pods/UPEmbeddedTextViewManager)
 
+UPEmbeddedTextViewManager is a convenience tool for employing UITextView instances embedded in table views. Enables scrolling and selection amongst other characteristics, to behave somewhat like the Notes section in the Contacts app (while editing a contact)
+
 ## Usage
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
@@ -22,7 +24,7 @@ pod "UPEmbeddedTextViewManager"
 
 ## Author
 
-Adriana Pineda, am.pineda206@uniandes.edu.co
+Martin Uribe & Adriana Pineda
 
 ## License
 
