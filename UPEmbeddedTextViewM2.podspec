@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = "UPEmbeddedTextViewM2"
   s.version          = "0.1.0"
-  s.summary          = "A short description of UPEmbeddedTextViewM2."
+  s.summary          = "Convenience tool for employing UITextView instances embedded in table views."
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -17,14 +17,13 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!  
   s.description      = <<-DESC
+                        Enables scrolling and selection amongst other characteristics, to behave somewhat like the Notes section in the Contacts app (while editing a contact)
                        DESC
 
-  s.homepage         = "https://github.com/<GITHUB_USERNAME>/UPEmbeddedTextViewM2"
-  # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
+  s.homepage         = "https://github.com/mugby99/UPEmbeddedTextView"
   s.license          = 'MIT'
-  s.author           = { "Adriana Pineda" => "am.pineda206@uniandes.edu.co" }
-  s.source           = { :git => "https://github.com/<GITHUB_USERNAME>/UPEmbeddedTextViewM2.git", :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.author           = { "Martin Uribe & Adriana Pineda" => "am.pineda206@uniandes.edu.co" }
+  s.source           = { :git => "https://github.com/mugby99/UPEmbeddedTextView.git", :tag => s.version.to_s }
 
   s.platform     = :ios, '8.0'
   s.requires_arc = true
@@ -34,7 +33,4 @@ Pod::Spec.new do |s|
     'UPEmbeddedTextViewM2' => ['Pod/Assets/*.png']
   }
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end

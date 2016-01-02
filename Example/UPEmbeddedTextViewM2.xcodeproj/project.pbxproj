@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01EE13C11C376AED0025D853 /* TestCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EE13C01C376AED0025D853 /* TestCellTableViewCell.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -28,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01EE13C01C376AED0025D853 /* TestCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestCellTableViewCell.swift; sourceTree = "<group>"; };
 		2898E7287FD016CA0103DB8A /* UPEmbeddedTextViewM2.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = UPEmbeddedTextViewM2.podspec; path = ../UPEmbeddedTextViewM2.podspec; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* UPEmbeddedTextViewM2_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UPEmbeddedTextViewM2_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -36,7 +38,7 @@
 		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		607FACE51AFB9204008FA782 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = Tests.xctest; path = UPEmbeddedTextViewM2_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		607FACE51AFB9204008FA782 /* UPEmbeddedTextViewM2_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UPEmbeddedTextViewM2_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		64C55B1DAB46EA43B656732A /* Pods-UPEmbeddedTextViewM2_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UPEmbeddedTextViewM2_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UPEmbeddedTextViewM2_Example/Pods-UPEmbeddedTextViewM2_Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -96,7 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				607FACD01AFB9204008FA782 /* UPEmbeddedTextViewM2_Example.app */,
-				607FACE51AFB9204008FA782 /* Tests.xctest */,
+				607FACE51AFB9204008FA782 /* UPEmbeddedTextViewM2_Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -110,6 +112,7 @@
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
+				01EE13C01C376AED0025D853 /* TestCellTableViewCell.swift */,
 			);
 			name = "Example for UPEmbeddedTextViewM2";
 			path = UPEmbeddedTextViewM2;
@@ -170,7 +173,6 @@
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				A8C8959AF83FEE557B719878 /* Embed Pods Frameworks */,
 				EE861A000A0EBB15F3F8888D /* Copy Pods Resources */,
 			);
 			buildRules = (
@@ -190,7 +192,6 @@
 				607FACE11AFB9204008FA782 /* Sources */,
 				607FACE21AFB9204008FA782 /* Frameworks */,
 				607FACE31AFB9204008FA782 /* Resources */,
-				B6E907C7516EBC7805891F58 /* Embed Pods Frameworks */,
 				F960D2910F24EABF53D513D7 /* Copy Pods Resources */,
 			);
 			buildRules = (
@@ -200,7 +201,7 @@
 			);
 			name = UPEmbeddedTextViewM2_Tests;
 			productName = Tests;
-			productReference = 607FACE51AFB9204008FA782 /* Tests.xctest */;
+			productReference = 607FACE51AFB9204008FA782 /* UPEmbeddedTextViewM2_Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -209,6 +210,7 @@
 		607FACC81AFB9204008FA782 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0720;
 				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
@@ -261,21 +263,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		A8C8959AF83FEE557B719878 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-UPEmbeddedTextViewM2_Example/Pods-UPEmbeddedTextViewM2_Example-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		A9D9111D418EBAF059D9DEB8 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -304,21 +291,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		B6E907C7516EBC7805891F58 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-UPEmbeddedTextViewM2_Tests/Pods-UPEmbeddedTextViewM2_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EE861A000A0EBB15F3F8888D /* Copy Pods Resources */ = {
@@ -359,6 +331,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
+				01EE13C11C376AED0025D853 /* TestCellTableViewCell.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

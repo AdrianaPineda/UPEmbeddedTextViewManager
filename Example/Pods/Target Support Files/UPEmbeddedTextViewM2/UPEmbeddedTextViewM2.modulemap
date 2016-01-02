@@ -1,0 +1,6 @@
+framework module UPEmbeddedTextViewM2 {
+  umbrella header "UPEmbeddedTextViewM2-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,14 @@
+PODS:
+  - UPEmbeddedTextViewM2 (0.1.0)
+
+DEPENDENCIES:
+  - UPEmbeddedTextViewM2 (from `../`)
+
+EXTERNAL SOURCES:
+  UPEmbeddedTextViewM2:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  UPEmbeddedTextViewM2: ac8b958100b4df8bcb3957db964fa28c31746b15
+
+COCOAPODS: 0.38.2
