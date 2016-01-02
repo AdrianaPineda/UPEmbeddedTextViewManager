@@ -1,0 +1,6 @@
+framework module UPEmbeddedTextViewManager {
+  umbrella header "UPEmbeddedTextViewManager-umbrella.h"
+
+  export *
+  module * { export * }
+}

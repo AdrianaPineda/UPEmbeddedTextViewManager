@@ -1,0 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+target 'UPEmbeddedTextViewManager_Example', :exclusive => true do
+  pod "UPEmbeddedTextViewManager", :path => "../"
+end
+
+target 'UPEmbeddedTextViewManager_Tests', :exclusive => true do
+  pod "UPEmbeddedTextViewManager", :path => "../"
+
+  
+end
