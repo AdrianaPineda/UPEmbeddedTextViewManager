@@ -20,10 +20,10 @@ Pod::Spec.new do |s|
                         Enables scrolling and selection amongst other characteristics, to behave somewhat like the Notes section in the Contacts app (while editing a contact)
                        DESC
 
-  s.homepage         = "https://github.com/mugby99/UPEmbeddedTextView"
+  s.homepage         = "https://github.com/AdrianaPineda/UPEmbeddedTextViewManager"
   s.license          = 'MIT'
   s.author           = { "Martin Uribe & Adriana Pineda" => "am.pineda206@uniandes.edu.co" }
-  s.source           = { :git => "https://github.com/mugby99/UPEmbeddedTextView.git", :tag => s.version.to_s }
+  s.source           = { :git => "https://github.com/AdrianaPineda/UPEmbeddedTextViewManager.git", :tag => s.version.to_s }
 
   s.platform     = :ios, '8.0'
   s.requires_arc = true
