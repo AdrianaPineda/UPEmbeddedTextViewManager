@@ -130,7 +130,7 @@ class UPManager: NSObject, UITextViewDelegate {
             if let mappedCell = offScreenCells[cellReuseIdentifier] as? UITableViewCell {
                 currentCellInstance = mappedCell
             } else {
-                currentCellInstance = tableView.dequeueReusableCellWithIdentifier(cellReuseIdentifier) as? UITableViewCell
+                currentCellInstance = tableView.dequeueReusableCellWithIdentifier(cellReuseIdentifier)
             }
             
             if currentCellInstance != nil{
@@ -229,7 +229,7 @@ class UPManager: NSObject, UITextViewDelegate {
         textForTextView: (textView: UITextView) -> String,
         initialMetaDataForTextView: (textView: UITextView) -> UPManagedTextViewMetaData) -> CGFloat {
             
-            var textViews = textViewsForCell(sizingCell, indexPath: indexPath,
+            let textViews = textViewsForCell(sizingCell, indexPath: indexPath,
                 initialMetaDataForTextView: initialMetaDataForTextView)
             
             for textView in textViews {
@@ -241,7 +241,7 @@ class UPManager: NSObject, UITextViewDelegate {
                 }
             }
             
-            var size: CGSize = sizingCell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
+            let size: CGSize = sizingCell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
             sizingCell.bounds = CGRectMake(sizingCell.bounds.origin.x, sizingCell.bounds.origin.y,
                 CGRectGetWidth(superViewBounds), size.height)
             sizingCell.contentView.bounds = sizingCell.bounds
@@ -280,7 +280,7 @@ class UPManager: NSObject, UITextViewDelegate {
             } else {
                 
                 for currentView in view.subviews {
-                    findTextViewsOfView(currentView as! UIView, indexPath: indexPath, textViews: textViews,
+                    findTextViewsOfView(currentView , indexPath: indexPath, textViews: textViews,
                         initialMetaDataForTextView: initialMetaDataForTextView)
                 }
             }
@@ -488,7 +488,7 @@ class UPManager: NSObject, UITextViewDelegate {
     private func addFakeManagedUPTextView(textView: UITextView, metaData: UPManagedTextViewMetaData,
         reuseIdentifier: String) {
             if !self.isFakeManagedUPTextViewWithReuseIdentifier(reuseIdentifier) {
-                textView.setTranslatesAutoresizingMaskIntoConstraints(false)
+                textView.translatesAutoresizingMaskIntoConstraints = false
                 self.fakeTextViewsMapper[reuseIdentifier] = metaData
             }
     }
@@ -527,14 +527,14 @@ class UPManager: NSObject, UITextViewDelegate {
     }
     
     private func isFakeManagedUPTextViewWithReuseIdentifier(reuseIdentifier: String) -> Bool {
-        if let metaData = self.fakeMetaDataForReuseIdentifier(reuseIdentifier) as UPManagedTextViewMetaData? {
+        if let _ = self.fakeMetaDataForReuseIdentifier(reuseIdentifier) as UPManagedTextViewMetaData? {
             return true
         }
         return false
     }
     
     private func isManagedUPTextView(textView: UITextView) -> Bool {
-        if let metaData = self.metaDataForManagedTextView(textView) as UPManagedTextViewMetaData? {
+        if let _ = self.metaDataForManagedTextView(textView) as UPManagedTextViewMetaData? {
             return true
         }
         return false
