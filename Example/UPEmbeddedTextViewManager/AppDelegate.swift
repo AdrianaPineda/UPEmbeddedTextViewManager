@@ -1,9 +1,9 @@
 //
 //  AppDelegate.swift
-//  UPEmbeddedTextViewManager
+//  UPEmbeddedTextView
 //
-//  Created by Adriana Pineda on 08/01/2015.
-//  Copyright (c) 2015 Adriana Pineda. All rights reserved.
+//  Created by Martin Uribe on 4/5/15.
+//  Copyright (c) 2015 up. All rights reserved.
 //
 
 import UIKit

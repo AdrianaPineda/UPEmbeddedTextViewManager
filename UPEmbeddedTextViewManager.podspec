@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "UPEmbeddedTextViewManager"
-  s.version          = "0.1.2"
+  s.version          = "0.1.3"
   s.summary          = "Convenience tool for employing UITextView instances embedded in table views."
   s.description      = <<-DESC
                        Enables scrolling and selection amongst other characteristics, to behave somewhat like the Notes section in the Contacts app (while editing a contact)
