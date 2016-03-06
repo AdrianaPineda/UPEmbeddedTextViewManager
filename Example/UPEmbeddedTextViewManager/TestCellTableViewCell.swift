@@ -12,6 +12,7 @@
 //
 
 import UIKit
+import UPEmbeddedTextViewManager
 
 class TestCellTableViewCell: UITableViewCell {
 

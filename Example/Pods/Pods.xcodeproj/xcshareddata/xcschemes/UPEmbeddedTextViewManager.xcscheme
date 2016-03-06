@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "75225744A80A81EBDC04AE29"
+               BlueprintIdentifier = "30C14BB2B639801617E34492"
                BuildableName = "UPEmbeddedTextViewManager.framework"
                BlueprintName = "UPEmbeddedTextViewManager"
                ReferencedContainer = "container:Pods.xcodeproj">

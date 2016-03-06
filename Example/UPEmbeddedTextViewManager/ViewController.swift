@@ -12,6 +12,7 @@
 //
 
 import UIKit
+import UPEmbeddedTextViewManager
 
 class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegate {
 
@@ -29,9 +30,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
         super.viewDidLoad()
         self.previousTextViewRect = CGSizeZero
         self.testTexts = [testText, testText2, testText3]
-        self.tableViewManager = UPManager(delegate:self, tableView: self.tableView)
+        self.tableViewManager = UPManager(delegate: self, tableView: tableView, defaults: nil)
         self.tableViewManager.startListeningForKeyboardEvents()
+        self.tableView.estimatedRowHeight = 100.0;
+        self.tableView.rowHeight = UITableViewAutomaticDimension;
         // Do any additional setup after loading the view, typically from a nib.
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        tableView.reloadData()
     }
 
     override func didReceiveMemoryWarning() {
@@ -49,36 +57,14 @@ class ViewController: UIViewController, UITableViewDataSource, UITextViewDelegat
         return 3
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-
-        if indexPath.section == 0 && (indexPath.row == 0 || indexPath.row == 1 || indexPath.row == 2) {
-            
-            return self.tableViewManager.heightForRowAtIndexPath(indexPath, cellReuseIdentifier: "testCell",
-                textForTextView: { (textView) -> String in
-                
-                if let testText = self.testTexts[indexPath.row] as? String{
-                    return testText
-                }
-                return ""
-                }, initialMetaDataForTextView:{ (textView) -> UPManagedTextViewMetaData in
-                    // TODO: Check if this will work for cells with multiple text views!
-                    return UPManagedTextViewMetaData(reuseIdentifier: "testCell" + String(indexPath.row), enableAutomaticCollapse: true, collapsedHeightConstant: 125)
-            })
-        }
-        
-        return 0
-    }
-    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-
         if let cell = tableView.dequeueReusableCellWithIdentifier("testCell", forIndexPath: indexPath) as? TestCellTableViewCell {
-            let metaData = UPManagedTextViewMetaData(reuseIdentifier: "testCell" + String(indexPath.row), enableAutomaticCollapse: true, collapsedHeightConstant: 125)
-            self.tableViewManager.configureManagedTextView(cell.textView, initialMetaData:metaData)
+            let metadata = UPManagedTextViewMetadata(textView: cell.textView, heightConstraint: nil, enableAutomaticCollapse: true, collapsedHeightConstant: 125)
+            tableViewManager.registerMetadata(metadata, indexPath: indexPath)
             
             if let testText = self.testTexts[indexPath.row] as? String{
                 cell.textView.text = testText
             }
-//            cell.textView.tag = indexPath.row
             
             return cell
         }
