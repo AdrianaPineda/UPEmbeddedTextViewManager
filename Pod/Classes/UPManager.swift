@@ -448,8 +448,11 @@ public class UPManager: NSObject, UITextViewDelegate {
             setTextViewPreviousSize(currentSize, textView: textView, indexPath: textViewIndexPath)
             if !CGSizeEqualToSize(currentSize, CGSizeZero)
             {
+                let currentOffset = tableView.contentOffset
                 self.tableView.beginUpdates()
                 self.tableView.endUpdates()
+                tableView.layer.removeAllAnimations()
+                tableView.setContentOffset(currentOffset, animated: false)
             }
         }
     }
